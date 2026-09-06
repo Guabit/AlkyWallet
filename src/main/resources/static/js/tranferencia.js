@@ -36,8 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     mostrarMensaje('¡Transferencia realizada con éxito!', 'exito');
                     formTransferencia.reset();
-                } else if (response.status === 400) {
-                    mostrarMensaje('Saldo insuficiente o datos inválidos.', 'error');
+                } else if (response.status === 400 || response.status === 404) {
+                    const data = await response.json().catch(() => null);
+                    const mensajeError = data?.mensaje
+                        || (data?.errores ? Object.values(data.errores).join(', ') : null)
+                        || 'Saldo insuficiente o datos inválidos.';
+                    mostrarMensaje(mensajeError, 'error');
                 } else if (response.status === 401 || response.status === 403) {
                     localStorage.removeItem('token');
                     window.location.href = 'ingresar.html';

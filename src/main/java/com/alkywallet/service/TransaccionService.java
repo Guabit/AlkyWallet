@@ -82,6 +82,27 @@ public class TransaccionService {
     }
 
     @Transactional
+    public void realizarTransferenciaPorEmail(String emailOrigen, String destinatarioEmail, Double monto) {
+        if (emailOrigen.trim().equalsIgnoreCase(destinatarioEmail.trim())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No podés transferirte dinero a vos mismo");
+        }
+
+        Usuario usuarioOrigen = userRepository.findByEmail(emailOrigen)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario origen no encontrado"));
+
+        Cuenta cuentaOrigen = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuarioOrigen.getId(), TipoMoneda.ARS)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta origen no encontrada"));
+
+        Usuario usuarioDestino = userRepository.findByEmail(destinatarioEmail.trim())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe un usuario con el email: " + destinatarioEmail));
+
+        Cuenta cuentaDestino = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuarioDestino.getId(), TipoMoneda.ARS)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El destinatario no posee una cuenta activa"));
+
+        realizarTransferencia(cuentaOrigen.getId(), cuentaDestino.getId(), monto);
+    }
+
+    @Transactional
     public void realizarTransferencia(Long cuentaOrigenId, Long cuentaDestinoId, Double monto) {
         if (cuentaOrigenId == null || cuentaDestinoId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Las cuentas de origen y destino son obligatorias");
