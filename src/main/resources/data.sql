@@ -13,3 +13,12 @@ VALUES (
     CURRENT_TIMESTAMP
 )
 ON CONFLICT (email) DO NOTHING;
+
+-- Cuenta inicial para el Admin
+INSERT INTO cuentas (saldo, tipo_moneda, is_deleted, created_at, updated_at, usuario_id)
+SELECT 0.00, 'ARS', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, u.id
+FROM usuarios u
+WHERE u.email = 'admin@alkywallet.com'
+  AND NOT EXISTS (
+    SELECT 1 FROM cuentas c WHERE c.usuario_id = u.id AND c.tipo_moneda = 'ARS'
+);

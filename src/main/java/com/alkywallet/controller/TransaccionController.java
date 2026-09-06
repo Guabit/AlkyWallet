@@ -2,7 +2,9 @@ package com.alkywallet.controller;
 
 import com.alkywallet.dto.GastoPorTipoDTO;
 import com.alkywallet.dto.TransaccionDTO;
+import com.alkywallet.dto.TransferenciaRequestDTO;
 import com.alkywallet.service.TransaccionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -41,5 +43,15 @@ public class TransaccionController {
         Double monto = payload.get("monto");
         transaccionService.realizarDepositoPorEmail(email, monto);
         return ResponseEntity.ok(Map.of("mensaje", "Depósito realizado con éxito"));
+    }
+
+    @PostMapping("/transferencia")
+    public ResponseEntity<Map<String, String>> realizarTransferencia(
+            @Valid @RequestBody TransferenciaRequestDTO request,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+        transaccionService.realizarTransferenciaPorEmail(email, request.destinatario(), request.monto());
+        return ResponseEntity.ok(Map.of("mensaje", "Transferencia realizada con éxito"));
     }
 }
