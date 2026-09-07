@@ -291,11 +291,13 @@
 
               <!-- Monto -->
               <div class="campo">
-                <label
-                  for="monto"
-                  class="block text-xs text-gray-400 mb-1 font-medium"
-                  >Monto</label
-                >
+                <div class="flex justify-between items-center mb-1">
+                  <label for="monto" class="block text-xs text-gray-400 font-medium">Monto</label>
+                  <span class="text-xs text-gray-400">
+                    Disponible: <strong id="saldo-disponible" class="text-turquoiseNeon font-mono">$ 0,00</strong>
+                  </span>
+                </div>
+
                 <div class="flex space-x-2">
                   <input
                     type="number"

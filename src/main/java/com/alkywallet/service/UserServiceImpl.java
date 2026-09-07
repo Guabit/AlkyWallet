@@ -108,6 +108,33 @@ public class UserServiceImpl implements IUserService {
         userRepository.save(usuario);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDTO obtenerPorEmail(String email) {
+        return toResponseDTO(buscarUsuarioActivoPorEmail(email));
+    }
+
+    @Override
+    @Transactional
+    public UserResponseDTO actualizarPorEmail(String email, UserUpdateDTO request) {
+        Usuario usuario = buscarUsuarioActivoPorEmail(email);
+
+        if (request.nombre() != null) {
+            usuario.setNombre(request.nombre().trim());
+        }
+        if (request.apellido() != null) {
+            usuario.setApellido(request.apellido().trim());
+        }
+
+        return toResponseDTO(userRepository.save(usuario));
+    }
+
+    private Usuario buscarUsuarioActivoPorEmail(String email) {
+        return userRepository.findByEmail(email)
+                .filter(u -> !u.isDeleted())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
+    }
+
     private Usuario buscarUsuarioActivo(Long id) {
         return userRepository.findById(id)
                 .filter(u -> !u.isDeleted())

@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -35,6 +36,19 @@ public class UserController {
         userService.registrarUsuario(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Usuario registrado exitosamente"));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> obtenerPerfil(Authentication authentication) {
+        return ResponseEntity.ok(userService.obtenerPorEmail(authentication.getName()));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDTO> actualizarPerfil(
+            Authentication authentication,
+            @Valid @RequestBody UserUpdateDTO request
+    ) {
+        return ResponseEntity.ok(userService.actualizarPorEmail(authentication.getName(), request));
     }
 
     @GetMapping("/{id}")
