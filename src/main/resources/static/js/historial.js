@@ -28,7 +28,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (!response.ok) {
-            throw new Error('Error al obtener el historial');
+            elCargando.classList.add('hidden');
+            elError.classList.remove('hidden');
+            return;
         }
 
         const movimientos = await response.json();
@@ -93,6 +95,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!fechaISO) return '';
         const fecha = new Date(fechaISO);
         if (isNaN(fecha.getTime())) return fechaISO;
-        return fecha.toLocaleDateString('es-AR');
+
+        return fecha.toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
 });

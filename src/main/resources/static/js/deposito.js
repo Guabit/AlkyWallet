@@ -10,11 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (inputMonto) {
         inputMonto.addEventListener('input', () => {
             const monto = parseFloat(inputMonto.value);
-            if (!isNaN(monto) && monto > 0) {
-                btnDepositar.disabled = false;
-            } else {
-                btnDepositar.disabled = true;
-            }
+            btnDepositar.disabled = !(monto > 0);
         });
     }
 
@@ -48,6 +44,28 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Error al realizar el depósito:', error);
                 mostrarMensaje('Error de conexión con el servidor.', 'error');
+            }
+        });
+    }
+
+    const btnCopiar = document.getElementById('btn-copiar-email');
+    if (btnCopiar) {
+        btnCopiar.addEventListener('click', () => {
+            const emailElemento = document.getElementById('email-usuario');
+            const emailTexto = emailElemento ? emailElemento.textContent.trim() : '';
+
+            if (emailTexto && emailTexto !== 'cargando...') {
+                navigator.clipboard.writeText(emailTexto).then(() => {
+                    const original = btnCopiar.textContent;
+                    btnCopiar.textContent = '¡Copiado!';
+                    btnCopiar.classList.add('text-emerald-400');
+                    setTimeout(() => {
+                        btnCopiar.textContent = original;
+                        btnCopiar.classList.remove('text-emerald-400');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Error al copiar al portapapeles:', err);
+                });
             }
         });
     }

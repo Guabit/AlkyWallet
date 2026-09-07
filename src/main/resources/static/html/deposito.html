@@ -27,6 +27,10 @@
 
     <!-- Enlace a hoja de estilos personalizada -->
     <link rel="stylesheet" href="../css/custom.css" />
+    <script defer src="../js/deposito.js"></script>
+    <script defer src="../js/sidebar.js"></script>
+    <script defer src="../js/auth-session.js"></script>
+
   </head>
   <body
     class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative overflow-x-hidden font-sans"
@@ -231,7 +235,7 @@
           <div
             class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800"
           >
-            <span class="text-sm font-medium text-white">Evano</span>
+            <span class="user-email text-sm font-medium text-white">Cargando...</span>
             <img
               src="https://i.pravatar.cc/100?img=12"
               alt="Foto de Perfil"
@@ -280,56 +284,17 @@
 
             <!-- Formulario de Datos -->
             <form id="form-deposito" class="space-y-5">
-              <!-- CVU -->
-              <div class="campo campo-copiable">
-                <label
-                  for="cvu"
-                  class="block text-xs text-gray-400 mb-1 font-medium"
-                  >CVU</label
-                >
-                <div
-                  class="flex items-center justify-between bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon w-full"
-                >
-                  <input
-                    type="text"
-                    id="cvu"
-                    name="cvu"
-                    value="0000003100012345678901"
-                    readonly
-                    class="bg-transparent flex-1 min-w-0 text-xs md:text-sm font-mono text-white outline-none pr-2"
-                  />
+              <!-- Info Email de la Cuenta -->
+              <div class="campo">
+                <span class="block text-xs text-gray-400 mb-1 font-medium">Email vinculado</span>
+                <div class="flex items-center justify-between bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 w-full">
+                  <span id="email-usuario" class="user-email text-xs md:text-sm font-mono text-white truncate pr-2">
+                    cargando...
+                  </span>
                   <button
-                    type="button"
-                    id="btn-copiar-cvu"
-                    class="btn-copiar text-xs text-turquoiseNeon font-semibold hover:text-white transition shrink-0"
-                  >
-                    Copiar
-                  </button>
-                </div>
-              </div>
-
-              <!-- Alias -->
-              <div class="campo campo-copiable">
-                <label
-                  for="alias"
-                  class="block text-xs text-gray-400 mb-1 font-medium"
-                  >Alias</label
-                >
-                <div
-                  class="flex items-center justify-between bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon w-full"
-                >
-                  <input
-                    type="text"
-                    id="alias"
-                    name="alias"
-                    value="Alkemy.Wall.Si"
-                    readonly
-                    class="bg-transparent flex-1 min-w-0 text-sm font-semibold text-white outline-none pr-2"
-                  />
-                  <button
-                    type="button"
-                    id="btn-copiar-alias"
-                    class="btn-copiar text-xs text-turquoiseNeon font-semibold hover:text-white transition shrink-0"
+                          type="button"
+                          id="btn-copiar-email"
+                          class="text-xs text-turquoiseNeon font-semibold hover:text-white transition shrink-0"
                   >
                     Copiar
                   </button>
@@ -341,7 +306,7 @@
                 <label for="monto" class="block text-xs text-gray-400 mb-1 font-medium">Monto a depositar</label>
                 <div class="flex items-center bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon w-full">
                   <span class="text-gray-400 mr-2">$</span>
-                  <input type="number" id="monto" name="monto" placeholder="0.00" min="1" step="any"
+                  <input type="number" id="monto" name="monto" placeholder="0.00" min="1" step="0.01"
                          class="bg-transparent flex-1 text-sm text-white outline-none">
                 </div>
               </div>
@@ -369,24 +334,5 @@
         <p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
       </footer>
     </main>
-
-    <!-- Scripts -->
-    <script src="../js/deposito.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const btnMenu = document.getElementById("btn-menu");
-        const menuNav = document.getElementById("menu-nav");
-        const menuSalir = document.getElementById("menu-salir");
-
-        if (btnMenu && menuNav) {
-          btnMenu.addEventListener("click", () => {
-            menuNav.classList.toggle("hidden");
-            if (menuSalir) {
-              menuSalir.classList.toggle("hidden");
-            }
-          });
-        }
-      });
-    </script>
   </body>
 </html>

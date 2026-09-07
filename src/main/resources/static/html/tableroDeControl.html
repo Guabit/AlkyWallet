@@ -30,6 +30,9 @@
     <link rel="stylesheet" href="../css/dashboard.module.css" />
     <script defer src="../js/dashboard.js"></script>
     <script defer src="../js/reporteGastos.js"></script>
+    <script defer src="../js/sidebar.js"></script>
+    <script defer src="../js/auth-session.js"></script>
+
   </head>
   <body
     class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative font-sans m-0 p-0 overflow-x-hidden"
@@ -232,14 +235,7 @@
         <!-- HEADER SUPERIOR DE USUARIO -->
         <div class="flex justify-between items-center mb-6">
           <div>
-            <h2 class="text-xl md:text-2xl font-bold text-white">
-              Bienvenido,
-              <span
-                id="nombre-usuario"
-                class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon"
-                >Evano</span
-              > 👋
-            </h2>
+            <h2>Bienvenido, <span class="user-email text-turquoiseNeon"></span> 👋</h2>
             <p class="text-xs text-gray-400">Resumen general de tu cuenta</p>
           </div>
 
@@ -247,7 +243,7 @@
           <div
             class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800"
           >
-            <span class="text-sm font-medium text-white">Evano</span>
+            <span class="user-email text-sm font-medium text-white">Cargando...</span>
             <img
               src="https://i.pravatar.cc/100?img=12"
               alt="Foto de Perfil"
@@ -319,51 +315,9 @@
               >
             </div>
 
-            <!-- Lista de movimientos de muestra -->
+            <!-- Contenedor donde dashboard.js inyecta los datos reales -->
             <div id="lista-movimientos" class="space-y-3">
-              <!-- Movimiento 1 -->
-              <div
-                class="flex items-center justify-between p-3 rounded-xl bg-[#0D0B14] border border-gray-800/60"
-              >
-                <div class="flex items-center space-x-3">
-                  <div
-                    class="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 font-bold"
-                  >
-                    ↓
-                  </div>
-                  <div>
-                    <p class="text-sm font-semibold text-white">
-                      Depósito Recibido
-                    </p>
-                    <p class="text-xs text-gray-400">Hoy, 14:20 hs</p>
-                  </div>
-                </div>
-                <span class="text-sm font-bold text-emerald-400"
-                  >+ $ 15.000,00</span
-                >
-              </div>
-
-              <!-- Movimiento 2 -->
-              <div
-                class="flex items-center justify-between p-3 rounded-xl bg-[#0D0B14] border border-gray-800/60"
-              >
-                <div class="flex items-center space-x-3">
-                  <div
-                    class="w-10 h-10 rounded-full bg-rose-500/10 text-rose-400 flex items-center justify-center border border-rose-500/20 font-bold"
-                  >
-                    ↑
-                  </div>
-                  <div>
-                    <p class="text-sm font-semibold text-white">
-                      Transferencia Enviada
-                    </p>
-                    <p class="text-xs text-gray-400">Ayer, 09:15 hs</p>
-                  </div>
-                </div>
-                <span class="text-sm font-bold text-rose-400"
-                  >- $ 3.200,00</span
-                >
-              </div>
+              <p class="text-xs text-center text-gray-500 py-4">Cargando movimientos...</p>
             </div>
           </div>
         </div>
@@ -374,23 +328,5 @@
         <p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
       </footer>
     </main>
-
-    <!-- Script para menú móvil -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const btnMenu = document.getElementById("btn-menu");
-        const menuNav = document.getElementById("menu-nav");
-        const menuSalir = document.getElementById("menu-salir");
-
-        if (btnMenu && menuNav) {
-          btnMenu.addEventListener("click", () => {
-            menuNav.classList.toggle("hidden");
-            if (menuSalir) {
-              menuSalir.classList.toggle("hidden");
-            }
-          });
-        }
-      });
-    </script>
   </body>
 </html>
