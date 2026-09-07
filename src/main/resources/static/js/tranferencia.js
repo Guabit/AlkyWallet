@@ -1,10 +1,50 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const formTransferencia = document.getElementById('form-transferencia');
     const inputDestino = document.getElementById('cuenta-destino');
     const inputMonto = document.getElementById('monto');
     const btnCancelar = document.getElementById('btn-cancelar');
+    const btnAll = document.getElementById('btn-all');
+    const saldoElement = document.getElementById('saldo-disponible');
     const mensajeNotificacion = document.getElementById('mensaje-notificacion');
     const token = localStorage.getItem('token');
+
+    let saldoActual = 0;
+
+    async function cargarSaldo() {
+        if (!saldoElement || !token) return;
+
+        try {
+            const response = await fetch('/api/cuentas/balance', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                saldoActual = Number(data.balance ?? data.saldo ?? data.amount ?? data) || 0;
+                saldoElement.textContent = new Intl.NumberFormat('es-AR', {
+                    style: 'currency',
+                    currency: 'ARS',
+                    minimumFractionDigits: 2
+                }).format(saldoActual);
+            }
+        } catch (error) {
+            console.error('Error al obtener el saldo:', error);
+        }
+    }
+
+    await cargarSaldo();
+
+    if (btnAll && inputMonto) {
+        btnAll.addEventListener('click', () => {
+            if (saldoActual > 0) {
+                inputMonto.value = saldoActual.toFixed(2);
+            }
+        });
+    }
 
     if (formTransferencia) {
         formTransferencia.addEventListener('submit', async (e) => {
@@ -18,13 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            if (monto > saldoActual) {
+                mostrarMensaje('No tenés saldo suficiente para realizar esta transferencia.', 'error');
+                return;
+            }
+
             const transferenciaRequestDTO = {
                 destinatario: destinatario,
                 monto: monto
             };
 
             try {
-                const response = await fetch('http://localhost:8080/api/transacciones/transferencia', {
+                const response = await fetch('/api/transacciones/transferencia', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -36,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     mostrarMensaje('¡Transferencia realizada con éxito!', 'exito');
                     formTransferencia.reset();
+                    await cargarSaldo();
                 } else if (response.status === 400 || response.status === 404) {
                     const data = await response.json().catch(() => null);
                     const mensajeError = data?.mensaje
