@@ -130,6 +130,14 @@ public class TransaccionService {
             throw new SaldoInsuficienteException("Saldo insuficiente en la cuenta origen");
         }
 
+        String infoDestino = (cuentaDestino.getUsuario() != null && cuentaDestino.getUsuario().getEmail() != null)
+                ? cuentaDestino.getUsuario().getEmail()
+                : String.valueOf(cuentaDestinoId);
+
+        String infoOrigen = (cuentaOrigen.getUsuario() != null && cuentaOrigen.getUsuario().getEmail() != null)
+                ? cuentaOrigen.getUsuario().getEmail()
+                : String.valueOf(cuentaOrigenId);
+
         // --- Débito en cuenta origen ---
         cuentaOrigen.setSaldo(cuentaOrigen.getSaldo().subtract(montoBigDecimal));
         cuentaRepository.save(cuentaOrigen);
@@ -138,7 +146,7 @@ public class TransaccionService {
                 .monto(montoBigDecimal)
                 .fecha(LocalDateTime.now())
                 .tipo(TipoTransaccion.EGRESO)
-                .concepto("Transferencia a cuenta " + cuentaDestinoId)
+                .concepto("Transferencia a cuenta " + infoDestino)
                 .cuenta(cuentaOrigen)
                 .build();
         transaccionRepository.save(egreso);
@@ -151,7 +159,7 @@ public class TransaccionService {
                 .monto(montoBigDecimal)
                 .fecha(LocalDateTime.now())
                 .tipo(TipoTransaccion.INGRESO)
-                .concepto("Transferencia desde cuenta " + cuentaOrigenId)
+                .concepto("Transferencia desde cuenta " + infoOrigen)
                 .cuenta(cuentaDestino)
                 .build();
         transaccionRepository.save(ingreso);
