@@ -28,7 +28,7 @@
 
     <!-- Hoja de estilos personalizados -->
     <link rel="stylesheet" href="../css/custom.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script defer src="../js/ingresar.js"></script>
 
 </head>
@@ -99,19 +99,14 @@
                 <!-- Mensaje de error general del servidor -->
                 <p id="mensajeError" class="text-red-500 text-sm text-center font-semibold hidden"></p>
 
-                <div class="flex items-center justify-between text-xs text-gray-400 pt-1">
-                    <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" class="accent-fuchsiaNeon rounded">
-                        <span>Save Email and Password</span>
-                    </label>
-                    <a href="./registro.html" class="text-turquoiseNeon hover:underline">Don't have an account?</a>
-                </div>
-
-                <div class="pt-4">
+                <div class="pt-4 flex items-center justify-between">
                     <button type="submit" 
                             class="w-32 bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-2.5 rounded-lg shadow-lg hover:opacity-90 transition duration-300 glow-button">
                         Sign in
                     </button>
+                    <a href="./registro.html" class="text-sm text-turquoiseNeon hover:underline">
+                        ¿No tienes una cuenta?
+                    </a>
                 </div>
             </form>
         </div>

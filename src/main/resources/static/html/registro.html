@@ -30,6 +30,7 @@
     <!-- CDN de Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script defer src="../js/registro.js"></script>
+
 </head>
 <body class="bg-bgMain text-textLight min-h-screen flex flex-col justify-between relative overflow-x-hidden font-sans">
 
@@ -101,11 +102,14 @@
                     <!-- Mensaje de error general del servidor -->
                     <p id="mensajeError" class="text-red-500 text-sm text-center font-semibold hidden"></p>
 
-                    <div class="pt-4">
+                    <div class="pt-4 flex items-center justify-between">
                         <button id="btn-registrar-1" type="submit" 
                                 class="w-32 bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-2.5 rounded-lg shadow-lg hover:opacity-90 transition duration-300 glow-button">
                             Registrarse
                         </button>
+                        <a href="./ingresar.html" class=" text-sm text-turquoiseNeon hover:underline">
+                            ¿Ya tienes una cuenta?
+                        </a>
                     </div>
                 </form>
             </div>
