@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "mercadopago.public-key",
+      "type": "java.lang.String",
+      "description": "Clave pública de la API de MercadoPago."
+    },
+    {
+      "name": "mercadopago.access-token",
+      "type": "java.lang.String",
+      "description": "Token de acceso a la API de MercadoPago."
+    }
+  ]
+}

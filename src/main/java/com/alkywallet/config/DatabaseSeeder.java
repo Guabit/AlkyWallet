@@ -26,7 +26,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Value("${admin.email:admin@alkywallet.com}")
     private String adminEmail;
 
-    @Value("${admin.password:Admin123$}")
+    @Value("${admin.password}")
     private String adminPassword;
 
     @Override

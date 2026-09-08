@@ -67,3 +67,5 @@ node_modules/
 cypress/videos/
 cypress/screenshots/
 
+.agents/
+patch_*
