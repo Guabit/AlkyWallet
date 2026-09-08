@@ -47,6 +47,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public UserResponseDTO crear(UserRequestDTO request) {
         validarUnicidadEmailYDni(request.email(), request.dni(), null);
 

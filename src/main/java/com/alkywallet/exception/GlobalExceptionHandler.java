@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@lombok.extern.slf4j.Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -71,7 +72,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error inesperado: " + ex.getMessage());
+        log.error("Error no manejado: ", ex);
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error interno. Por favor, intente nuevamente más tarde.");
     }
 
     private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
