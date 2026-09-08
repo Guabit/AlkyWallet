@@ -29,9 +29,9 @@
     <link rel="stylesheet" href="../css/custom.css" />
     <link rel="stylesheet" href="../css/dashboard.module.css" />
     <script defer src="../js/balance-visibility.js"></script>
+    <script defer src="../js/reporteGastos.js"></script>
     <script defer src="../js/dashboard.js"></script>
     <script defer src="../js/cotizacion.js"></script>
-    <script defer src="../js/reporteGastos.js"></script>
     <script defer src="../js/sidebar.js"></script>
     <script defer src="../js/auth-session.js"></script>
 
@@ -264,7 +264,7 @@
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5"
             />
           </svg>
-          <span>Salir de ALKYWALLET</span>
+          <span>Cerrar Sesión</span>
         </button>
       </div>
     </aside>
@@ -301,11 +301,18 @@
             class="bg-cardDark rounded-2xl p-6 md:p-8 border border-fuchsiaNeon/30 shadow-2xl glow-card-fuchsia flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
           >
             <div>
-              <p
-                class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1"
-              >
-                Balance Total
-              </p>
+              <div class="flex items-center gap-3 mb-1">
+                <p
+                  class="text-xs text-gray-400 font-medium uppercase tracking-wider"
+                >
+                  Balance Total
+                </p>
+                <!-- Selector sutil ARS / USD -->
+                <div class="inline-flex bg-[#0D0B14] p-0.5 rounded-lg border border-gray-800 text-[11px]">
+                  <button id="btn-moneda-ars" type="button" class="px-2 py-0.5 rounded font-bold transition text-white bg-fuchsiaNeon">ARS</button>
+                  <button id="btn-moneda-usd" type="button" class="hidden px-2 py-0.5 rounded font-semibold transition text-gray-400 hover:text-white">USD</button>
+                </div>
+              </div>
               <div class="flex items-center gap-2">
                 <h2
                   id="saldo-disponible"
@@ -333,6 +340,31 @@
                 >Transferir</a
               >
             </div>
+          </div>
+
+          <!-- Banner para abrir cuenta en USD -->
+          <div
+            id="banner-abrir-usd"
+            class="hidden bg-cardDark rounded-2xl p-5 border border-turquoiseNeon/30 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          >
+            <div class="flex items-center space-x-3">
+              <span
+                class="w-10 h-10 rounded-xl bg-turquoiseNeon/10 border border-turquoiseNeon/30 flex items-center justify-center text-turquoiseNeon font-bold text-sm"
+              >
+                USD
+              </span>
+              <div>
+                <p class="text-sm font-bold text-white">¿Querés operar en Dólares?</p>
+                <p class="text-xs text-gray-400">Abrí tu caja de ahorro en USD en un solo clic y transferí sin comisión.</p>
+              </div>
+            </div>
+            <button
+              id="btn-crear-cuenta-usd"
+              type="button"
+              class="w-full sm:w-auto text-center bg-turquoiseNeon text-bgMain px-4 py-2.5 rounded-xl font-bold text-xs hover:brightness-110 transition shadow-lg whitespace-nowrap"
+            >
+              Abrir cuenta en USD gratis
+            </button>
           </div>
 
           <!-- COTIZACIÓN DEL DÓLAR + CONVERSOR -->

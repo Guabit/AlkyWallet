@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +23,16 @@ public class CuentaService {
 
     @Transactional
     public CuentaDTO obtenerBalancePorUsuarioId(Long usuarioId) {
+        return obtenerBalancePorUsuarioId(usuarioId, TipoMoneda.ARS);
+    }
+
+    @Transactional
+    public CuentaDTO obtenerBalancePorUsuarioId(Long usuarioId, TipoMoneda moneda) {
         Usuario usuario = userRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
-                .orElseGet(() -> crearCuentaInicial(usuario));
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda)
+                .orElseGet(() -> crearCuentaInicial(usuario, moneda));
 
         return CuentaDTO.builder()
                 .id(cuenta.getId())
@@ -37,11 +43,16 @@ public class CuentaService {
 
     @Transactional
     public CuentaDTO obtenerBalancePorEmail(String email) {
+        return obtenerBalancePorEmail(email, TipoMoneda.ARS);
+    }
+
+    @Transactional
+    public CuentaDTO obtenerBalancePorEmail(String email, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
-                .orElseGet(() -> crearCuentaInicial(usuario));
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda)
+                .orElseGet(() -> crearCuentaInicial(usuario, moneda));
 
         return CuentaDTO.builder()
                 .id(cuenta.getId())
@@ -50,11 +61,42 @@ public class CuentaService {
                 .build();
     }
 
-    private Cuenta crearCuentaInicial(Usuario usuario) {
+    @Transactional
+    public CuentaDTO crearCuenta(String email, TipoMoneda moneda) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        if (cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario ya posee una cuenta en " + moneda);
+        }
+
+        Cuenta cuenta = crearCuentaInicial(usuario, moneda);
+        return CuentaDTO.builder()
+                .id(cuenta.getId())
+                .saldo(cuenta.getSaldo())
+                .tipoMoneda(cuenta.getTipoMoneda())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CuentaDTO> obtenerCuentasPorEmail(String email) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        return cuentaRepository.findByUsuarioId(usuario.getId()).stream()
+                .map(c -> CuentaDTO.builder()
+                        .id(c.getId())
+                        .saldo(c.getSaldo())
+                        .tipoMoneda(c.getTipoMoneda())
+                        .build())
+                .toList();
+    }
+
+    private Cuenta crearCuentaInicial(Usuario usuario, TipoMoneda moneda) {
         Cuenta nuevaCuenta = Cuenta.builder()
                 .usuario(usuario)
                 .saldo(BigDecimal.ZERO)
-                .tipoMoneda(TipoMoneda.ARS)
+                .tipoMoneda(moneda)
                 .isDeleted(false)
                 .build();
 

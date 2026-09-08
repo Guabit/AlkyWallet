@@ -4,6 +4,7 @@ import com.alkywallet.dto.GastoPorCategoriaDTO;
 import com.alkywallet.dto.GastoPorTipoDTO;
 import com.alkywallet.dto.TransaccionDTO;
 import com.alkywallet.dto.TransferenciaRequestDTO;
+import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.service.TransaccionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,34 +23,37 @@ public class TransaccionController {
     private final TransaccionService transaccionService;
 
     @GetMapping("/historial")
-    public ResponseEntity<List<TransaccionDTO>> getHistorial(Authentication authentication) {
+    public ResponseEntity<List<TransaccionDTO>> getHistorial(Authentication authentication, @RequestParam(required = false, defaultValue = "ARS") TipoMoneda moneda) {
         String email = authentication.getName();
-        List<TransaccionDTO> historial = transaccionService.obtenerHistorialPorEmail(email);
+        List<TransaccionDTO> historial = transaccionService.obtenerHistorialPorEmail(email, moneda);
         return ResponseEntity.ok(historial);
     }
 
     @GetMapping("/reporte-gastos")
-    public ResponseEntity<List<GastoPorTipoDTO>> getReporteGastos(Authentication authentication) {
+    public ResponseEntity<List<GastoPorTipoDTO>> getReporteGastos(Authentication authentication, @RequestParam(required = false, defaultValue = "ARS") TipoMoneda moneda) {
         String email = authentication.getName();
-        List<GastoPorTipoDTO> reporte = transaccionService.obtenerReporteGastosPorEmail(email);
+        List<GastoPorTipoDTO> reporte = transaccionService.obtenerReporteGastosPorEmail(email, moneda);
         return ResponseEntity.ok(reporte);
     }
 
     @GetMapping("/reporte-categorias")
-    public ResponseEntity<List<GastoPorCategoriaDTO>> getReporteCategorias(Authentication authentication) {
+    public ResponseEntity<List<GastoPorCategoriaDTO>> getReporteCategorias(Authentication authentication, @RequestParam(required = false, defaultValue = "ARS") TipoMoneda moneda) {
         String email = authentication.getName();
-        List<GastoPorCategoriaDTO> reporte = transaccionService.obtenerReporteCategoriasPorEmail(email);
+        List<GastoPorCategoriaDTO> reporte = transaccionService.obtenerReporteCategoriasPorEmail(email, moneda);
         return ResponseEntity.ok(reporte);
     }
 
     @PostMapping("/deposito")
     public ResponseEntity<Map<String, String>> realizarDeposito(
-            @RequestBody Map<String, Double> payload,
+            @RequestBody Map<String, Object> payload,
             Authentication authentication
     ) {
         String email = authentication.getName();
-        Double monto = payload.get("monto");
-        transaccionService.realizarDepositoPorEmail(email, monto);
+        Double monto = Double.valueOf(payload.get("monto").toString());
+        String monedaStr = (String) payload.get("moneda");
+        TipoMoneda moneda = (monedaStr != null) ? TipoMoneda.valueOf(monedaStr) : TipoMoneda.ARS;
+        
+        transaccionService.realizarDepositoPorEmail(email, monto, moneda);
         return ResponseEntity.ok(Map.of("mensaje", "Depósito realizado con éxito"));
     }
 
@@ -59,7 +63,8 @@ public class TransaccionController {
             Authentication authentication
     ) {
         String email = authentication.getName();
-        transaccionService.realizarTransferenciaPorEmail(email, request.destinatario(), request.monto(), request.categoria());
+        TipoMoneda moneda = request.moneda() != null ? request.moneda() : TipoMoneda.ARS;
+        transaccionService.realizarTransferenciaPorEmail(email, request.destinatario(), request.monto(), request.categoria(), moneda);
         return ResponseEntity.ok(Map.of("mensaje", "Transferencia realizada con éxito"));
     }
 }

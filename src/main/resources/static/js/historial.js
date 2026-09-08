@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const elError = document.getElementById('historial-error');
     const elTablaWrapper = document.getElementById('historial-tabla-wrapper');
     const tbody = document.getElementById('historial-tbody');
+    const btnFiltroArs = document.getElementById('btn-filtro-ars');
+    const btnFiltroUsd = document.getElementById('btn-filtro-usd');
+
+    let monedaActual = 'ARS';
 
     const ETIQUETAS_CATEGORIA = {
         COMIDA: 'Comida',
@@ -24,43 +28,68 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/transacciones/historial', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+    // Verificar si el usuario tiene cuenta en USD para mostrar el botón de filtro
+    async function verificarCuentaUsd() {
+        try {
+            const resp = await fetch('/api/cuentas', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (resp.ok) {
+                const cuentas = await resp.json();
+                const tieneUsd = cuentas.some(c => c.tipoMoneda === 'USD');
+                if (tieneUsd && btnFiltroUsd) {
+                    btnFiltroUsd.classList.remove('hidden');
+                }
             }
-        });
-
-        if (response.status === 401 || response.status === 403) {
-            localStorage.removeItem('token');
-            window.location.href = 'ingresar.html';
-            return;
+        } catch (e) {
+            console.error('Error al verificar cuentas:', e);
         }
+    }
 
-        if (!response.ok) {
+    async function cargarHistorial() {
+        elCargando.classList.remove('hidden');
+        elVacio.classList.add('hidden');
+        elError.classList.add('hidden');
+        elTablaWrapper.classList.add('hidden');
+
+        try {
+            const response = await fetch(`/api/transacciones/historial?moneda=${monedaActual}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('token');
+                window.location.href = 'ingresar.html';
+                return;
+            }
+
+            if (!response.ok) {
+                elCargando.classList.add('hidden');
+                elError.classList.remove('hidden');
+                return;
+            }
+
+            const movimientos = await response.json();
+            elCargando.classList.add('hidden');
+
+            if (!Array.isArray(movimientos) || movimientos.length === 0) {
+                elVacio.textContent = `Todavía no tenés movimientos en ${monedaActual}.`;
+                elVacio.classList.remove('hidden');
+                return;
+            }
+
+            renderMovimientos(movimientos);
+            elTablaWrapper.classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Error al cargar el historial:', error);
             elCargando.classList.add('hidden');
             elError.classList.remove('hidden');
-            return;
         }
-
-        const movimientos = await response.json();
-
-        elCargando.classList.add('hidden');
-
-        if (!Array.isArray(movimientos) || movimientos.length === 0) {
-            elVacio.classList.remove('hidden');
-            return;
-        }
-
-        renderMovimientos(movimientos);
-        elTablaWrapper.classList.remove('hidden');
-
-    } catch (error) {
-        console.error('Error al cargar el historial:', error);
-        elCargando.classList.add('hidden');
-        elError.classList.remove('hidden');
     }
 
     // Determina la etiqueta precisa del movimiento según tipo, categoría y concepto
@@ -117,7 +146,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const tdMonto = document.createElement('td');
             tdMonto.classList.add('py-3.5', 'text-right', esIngreso ? 'historial-monto-ingreso' : 'historial-monto-egreso');
             const signo = esIngreso ? '+' : '-';
-            tdMonto.textContent = `${signo}$ ${Math.abs(monto).toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
+            const simboloMoneda = monedaActual === 'USD' ? 'US$' : '$';
+            tdMonto.textContent = `${signo}${simboloMoneda} ${Math.abs(monto).toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
 
             fila.appendChild(tdDescripcion);
             fila.appendChild(tdFecha);
@@ -142,4 +172,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             minute: '2-digit'
         });
     }
+
+    // Botones de filtro de moneda
+    btnFiltroArs?.addEventListener('click', () => {
+        if (monedaActual === 'ARS') return;
+        monedaActual = 'ARS';
+        btnFiltroArs.className = 'px-4 py-2 rounded-lg text-xs font-bold transition bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white shadow-md';
+        btnFiltroUsd.className = 'px-4 py-2 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition';
+        cargarHistorial();
+    });
+
+    btnFiltroUsd?.addEventListener('click', () => {
+        if (monedaActual === 'USD') return;
+        monedaActual = 'USD';
+        btnFiltroUsd.className = 'px-4 py-2 rounded-lg text-xs font-bold transition bg-gradient-to-r from-turquoiseNeon to-blue-500 text-bgMain shadow-md';
+        btnFiltroArs.className = 'px-4 py-2 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition';
+        cargarHistorial();
+    });
+
+    await verificarCuentaUsd();
+    await cargarHistorial();
 });
