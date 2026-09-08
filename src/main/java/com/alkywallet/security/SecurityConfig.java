@@ -45,6 +45,9 @@ public class SecurityConfig {
                         ).permitAll()
                         // Endpoints públicos de autenticación y registro de usuarios
                         .requestMatchers("/api/auth/**", "/api/usuarios/registrar", "/error").permitAll()
+                        // Webhook de Mercado Pago: lo llaman los servidores de Mercado Pago,
+                        // no un usuario logueado, así que no puede requerir JWT.
+                        .requestMatchers("/api/mercadopago/webhook").permitAll()
                         // Documentacion Swagger / OpenAPI
                         .requestMatchers(
                                 "/v3/api-docs/**",

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const formTransferencia = document.getElementById('form-transferencia');
     const inputDestino = document.getElementById('cuenta-destino');
     const inputMonto = document.getElementById('monto');
+    const selectCategoria = document.getElementById('categoria');
     const btnCancelar = document.getElementById('btn-cancelar');
     const btnAll = document.getElementById('btn-all');
     const saldoElement = document.getElementById('saldo-disponible');
@@ -9,6 +10,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');
 
     let saldoActual = 0;
+
+    // Si se llega desde un link/QR de cobro (?to=...&amount=...), precargamos el formulario.
+    function precargarDesdeUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const destino = params.get('to');
+        const monto = params.get('amount');
+
+        if (destino && inputDestino) {
+            inputDestino.value = destino;
+        }
+        if (monto && inputMonto) {
+            const montoNumerico = parseFloat(monto);
+            if (!isNaN(montoNumerico) && montoNumerico > 0) {
+                inputMonto.value = montoNumerico.toFixed(2);
+            }
+        }
+    }
 
     async function cargarSaldo() {
         if (!saldoElement || !token) return;
@@ -25,18 +43,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (response.ok) {
                 const data = await response.json();
                 saldoActual = Number(data.balance ?? data.saldo ?? data.amount ?? data) || 0;
-                saldoElement.textContent = new Intl.NumberFormat('es-AR', {
+                const textoFormateado = new Intl.NumberFormat('es-AR', {
                     style: 'currency',
                     currency: 'ARS',
                     minimumFractionDigits: 2
                 }).format(saldoActual);
+
+                if (window.AlkyBalanceVisibility) {
+                    window.AlkyBalanceVisibility.render(saldoElement, textoFormateado);
+                } else {
+                    saldoElement.textContent = textoFormateado;
+                }
             }
         } catch (error) {
             console.error('Error al obtener el saldo:', error);
         }
     }
 
+    precargarDesdeUrl();
     await cargarSaldo();
+
+    if (window.AlkyBalanceVisibility) {
+        window.AlkyBalanceVisibility.inicializarBoton(
+            document.getElementById('btn-toggle-saldo'),
+            saldoElement
+        );
+    }
 
     if (btnAll && inputMonto) {
         btnAll.addEventListener('click', () => {
@@ -52,6 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const destinatario = inputDestino ? inputDestino.value.trim() : '';
             const monto = inputMonto ? parseFloat(inputMonto.value) : 0;
+            const categoria = selectCategoria ? selectCategoria.value : 'TRANSFERENCIA';
 
             if (!destinatario || isNaN(monto) || monto <= 0) {
                 mostrarMensaje('Por favor, ingresá un destinatario y un monto válido.', 'error');
@@ -65,7 +98,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const transferenciaRequestDTO = {
                 destinatario: destinatario,
-                monto: monto
+                monto: monto,
+                categoria: categoria
             };
 
             try {

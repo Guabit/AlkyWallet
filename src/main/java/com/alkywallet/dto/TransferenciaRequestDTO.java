@@ -1,5 +1,6 @@
 package com.alkywallet.dto;
 
+import com.alkywallet.entity.CategoriaTransaccion;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +13,9 @@ public record TransferenciaRequestDTO(
 
         @NotNull(message = "El monto es obligatorio")
         @Positive(message = "El monto debe ser mayor a cero")
-        Double monto
+        Double monto,
+
+        // Opcional: si no se envía, el service usa CategoriaTransaccion.TRANSFERENCIA por defecto.
+        CategoriaTransaccion categoria
 ) {
 }

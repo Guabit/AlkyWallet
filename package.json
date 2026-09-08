@@ -1,0 +1,13 @@
+{
+  "name": "alkywallet-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Suite de pruebas end-to-end (Cypress) para AlkyWallet",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "^14.0.0"
+  }
+}

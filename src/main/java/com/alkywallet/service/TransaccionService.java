@@ -1,9 +1,11 @@
 package com.alkywallet.service;
 
+import com.alkywallet.dto.GastoPorCategoriaDTO;
 import com.alkywallet.dto.GastoPorTipoDTO;
 import com.alkywallet.dto.TransaccionDTO;
 import com.alkywallet.exception.ResourceNotFoundException;
 import com.alkywallet.exception.SaldoInsuficienteException;
+import com.alkywallet.entity.CategoriaTransaccion;
 import com.alkywallet.entity.Cuenta;
 import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.entity.TipoTransaccion;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -83,6 +86,12 @@ public class TransaccionService {
 
     @Transactional
     public void realizarTransferenciaPorEmail(String emailOrigen, String destinatarioEmail, Double monto) {
+        realizarTransferenciaPorEmail(emailOrigen, destinatarioEmail, monto, CategoriaTransaccion.TRANSFERENCIA);
+    }
+
+    @Transactional
+    public void realizarTransferenciaPorEmail(String emailOrigen, String destinatarioEmail, Double monto,
+                                               CategoriaTransaccion categoria) {
         if (emailOrigen.trim().equalsIgnoreCase(destinatarioEmail.trim())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No podés transferirte dinero a vos mismo");
         }
@@ -99,11 +108,17 @@ public class TransaccionService {
         Cuenta cuentaDestino = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuarioDestino.getId(), TipoMoneda.ARS)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El destinatario no posee una cuenta activa"));
 
-        realizarTransferencia(cuentaOrigen.getId(), cuentaDestino.getId(), monto);
+        realizarTransferencia(cuentaOrigen.getId(), cuentaDestino.getId(), monto, categoria);
     }
 
     @Transactional
     public void realizarTransferencia(Long cuentaOrigenId, Long cuentaDestinoId, Double monto) {
+        realizarTransferencia(cuentaOrigenId, cuentaDestinoId, monto, CategoriaTransaccion.TRANSFERENCIA);
+    }
+
+    @Transactional
+    public void realizarTransferencia(Long cuentaOrigenId, Long cuentaDestinoId, Double monto,
+                                       CategoriaTransaccion categoriaSolicitada) {
         if (cuentaOrigenId == null || cuentaDestinoId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Las cuentas de origen y destino son obligatorias");
         }
@@ -113,6 +128,8 @@ public class TransaccionService {
         if (monto == null || monto <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El monto debe ser mayor a cero");
         }
+
+        CategoriaTransaccion categoria = categoriaSolicitada != null ? categoriaSolicitada : CategoriaTransaccion.TRANSFERENCIA;
 
         Cuenta cuentaOrigen = cuentaRepository.findById(cuentaOrigenId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta origen no encontrada"));
@@ -147,6 +164,7 @@ public class TransaccionService {
                 .fecha(LocalDateTime.now())
                 .tipo(TipoTransaccion.EGRESO)
                 .concepto("Transferencia a cuenta " + infoDestino)
+                .categoria(categoria)
                 .cuenta(cuentaOrigen)
                 .build();
         transaccionRepository.save(egreso);
@@ -160,6 +178,7 @@ public class TransaccionService {
                 .fecha(LocalDateTime.now())
                 .tipo(TipoTransaccion.INGRESO)
                 .concepto("Transferencia desde cuenta " + infoOrigen)
+                .categoria(categoria)
                 .cuenta(cuentaDestino)
                 .build();
         transaccionRepository.save(ingreso);
@@ -185,5 +204,29 @@ public class TransaccionService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
 
         return transaccionRepository.obtenerTotalPorTipoYCuentaId(cuenta.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GastoPorCategoriaDTO> obtenerReporteCategoriasPorEmail(String email) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
+
+        return transaccionRepository.obtenerTotalPorCategoriaYCuentaId(cuenta.getId());
+    }
+
+    // Usado por el Asistente IA. Suma todos los egresos desde el día 1 del mes actual.
+    @Transactional(readOnly = true)
+    public BigDecimal obtenerTotalGastadoEsteMesPorEmail(String email) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
+
+        LocalDateTime desde = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        return transaccionRepository.obtenerTotalEgresosDesde(cuenta.getId(), desde);
     }
 }

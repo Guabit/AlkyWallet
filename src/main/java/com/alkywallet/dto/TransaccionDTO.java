@@ -1,5 +1,6 @@
 package com.alkywallet.dto;
 
+import com.alkywallet.entity.CategoriaTransaccion;
 import com.alkywallet.entity.TipoTransaccion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,4 +21,5 @@ public class TransaccionDTO {
     private TipoTransaccion tipoTransaccion;
     private String concepto;
     private Long cuentaId;
+    private CategoriaTransaccion categoria;
 }

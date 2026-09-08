@@ -44,6 +44,13 @@ public class Transaccion {
     @Column(nullable = false)
     private String concepto;
 
+    // Categoría de gasto/ingreso (comida, transporte, inversión, etc.).
+    // Nueva columna, no rompe transacciones existentes: por defecto OTROS.
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private CategoriaTransaccion categoria = CategoriaTransaccion.OTROS;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cuenta_id", nullable = false, updatable = false)
     private Cuenta cuenta;

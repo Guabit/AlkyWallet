@@ -23,17 +23,31 @@ async function cargarBalance() {
 
         if (!response.ok) {
             console.error(`Error HTTP: ${response.status}`);
-            saldoElement.textContent = '$ 0,00';
+            if (window.AlkyBalanceVisibility) {
+                window.AlkyBalanceVisibility.render(saldoElement, '$ 0,00');
+            } else {
+                saldoElement.textContent = '$ 0,00';
+            }
             return;
         }
 
         const data = await response.json();
         const saldoNumerico = data.balance ?? data.saldo ?? data.amount ?? data;
-        saldoElement.textContent = formatCurrency(Number(saldoNumerico));
+        const textoFormateado = formatCurrency(Number(saldoNumerico));
+
+        if (window.AlkyBalanceVisibility) {
+            window.AlkyBalanceVisibility.render(saldoElement, textoFormateado);
+        } else {
+            saldoElement.textContent = textoFormateado;
+        }
 
     } catch (error) {
         console.error('Error al obtener el saldo:', error);
-        saldoElement.textContent = '$ 0,00';
+        if (window.AlkyBalanceVisibility) {
+            window.AlkyBalanceVisibility.render(saldoElement, '$ 0,00');
+        } else {
+            saldoElement.textContent = '$ 0,00';
+        }
     }
 }
 
@@ -107,4 +121,11 @@ async function cargarUltimosMovimientos() {
 document.addEventListener('DOMContentLoaded', () => {
     cargarBalance();
     cargarUltimosMovimientos();
+
+    if (window.AlkyBalanceVisibility) {
+        window.AlkyBalanceVisibility.inicializarBoton(
+            document.getElementById('btn-toggle-saldo'),
+            document.getElementById('saldo-disponible')
+        );
+    }
 });

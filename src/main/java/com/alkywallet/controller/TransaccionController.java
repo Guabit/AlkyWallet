@@ -1,5 +1,6 @@
 package com.alkywallet.controller;
 
+import com.alkywallet.dto.GastoPorCategoriaDTO;
 import com.alkywallet.dto.GastoPorTipoDTO;
 import com.alkywallet.dto.TransaccionDTO;
 import com.alkywallet.dto.TransferenciaRequestDTO;
@@ -34,6 +35,13 @@ public class TransaccionController {
         return ResponseEntity.ok(reporte);
     }
 
+    @GetMapping("/reporte-categorias")
+    public ResponseEntity<List<GastoPorCategoriaDTO>> getReporteCategorias(Authentication authentication) {
+        String email = authentication.getName();
+        List<GastoPorCategoriaDTO> reporte = transaccionService.obtenerReporteCategoriasPorEmail(email);
+        return ResponseEntity.ok(reporte);
+    }
+
     @PostMapping("/deposito")
     public ResponseEntity<Map<String, String>> realizarDeposito(
             @RequestBody Map<String, Double> payload,
@@ -51,7 +59,7 @@ public class TransaccionController {
             Authentication authentication
     ) {
         String email = authentication.getName();
-        transaccionService.realizarTransferenciaPorEmail(email, request.destinatario(), request.monto());
+        transaccionService.realizarTransferenciaPorEmail(email, request.destinatario(), request.monto(), request.categoria());
         return ResponseEntity.ok(Map.of("mensaje", "Transferencia realizada con éxito"));
     }
 }

@@ -51,11 +51,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         elError.classList.remove('hidden');
     }
 
+    const ETIQUETAS_CATEGORIA = {
+        COMIDA: 'Comida',
+        TRANSPORTE: 'Transporte',
+        SERVICIOS: 'Servicios',
+        ENTRETENIMIENTO: 'Entretenimiento',
+        SALUD: 'Salud',
+        EDUCACION: 'Educación',
+        INVERSION: 'Inversión',
+        TRANSFERENCIA: 'Transferencia',
+        OTROS: 'Otros'
+    };
+
     function renderMovimientos(movimientos) {
         movimientos.forEach((mov) => {
             const descripcion = mov.concepto ?? '';
             const fecha = formatearFecha(mov.fecha);
             const tipo = (mov.tipoTransaccion ?? mov.tipo ?? '').toUpperCase();
+            const categoria = String(mov.categoria ?? '').toUpperCase();
             const monto = Number(mov.monto) || 0;
             const esIngreso = tipo === 'INGRESO' || tipo === 'DEPOSITO';
 
@@ -77,6 +90,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             badge.textContent = tipo === 'DEPOSITO' ? 'Depósito' : (esIngreso ? 'Transferencia Recibida' : 'Transferencia Enviada');
             tdTipo.appendChild(badge);
 
+            const tdCategoria = document.createElement('td');
+            tdCategoria.className = 'py-3.5 text-xs text-gray-400';
+            tdCategoria.textContent = ETIQUETAS_CATEGORIA[categoria] || 'Otros';
+
             const tdMonto = document.createElement('td');
             tdMonto.classList.add('py-3.5', 'text-right', esIngreso ? 'historial-monto-ingreso' : 'historial-monto-egreso');
             const signo = esIngreso ? '+' : '-';
@@ -85,6 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             fila.appendChild(tdDescripcion);
             fila.appendChild(tdFecha);
             fila.appendChild(tdTipo);
+            fila.appendChild(tdCategoria);
             fila.appendChild(tdMonto);
 
             tbody.appendChild(fila);

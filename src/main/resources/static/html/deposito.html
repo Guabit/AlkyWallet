@@ -175,7 +175,47 @@
             <span>Depósitos</span>
           </a>
 
-          <!-- 4. Perfil -->
+          <!-- 4. Inversiones -->
+          <a
+            href="inversiones.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 17l6-6 4 4 8-8M21 7v6m0-6h-6"
+              />
+            </svg>
+            <span>Inversiones</span>
+          </a>
+
+          <!-- 5. Servicios -->
+          <a
+            href="servicios.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <rect x="4" y="4" width="7" height="7" rx="1.5" stroke-width="2" />
+              <rect x="13" y="4" width="7" height="7" rx="1.5" stroke-width="2" />
+              <rect x="4" y="13" width="7" height="7" rx="1.5" stroke-width="2" />
+              <rect x="13" y="13" width="7" height="7" rx="1.5" stroke-width="2" />
+            </svg>
+            <span>Servicios</span>
+          </a>
+
+          <!-- 6. Perfil -->
           <a
             href="perfil.html"
             class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
@@ -325,6 +365,19 @@
                 </button>
               </div>
             </form>
+
+            <!-- Alternativa: cargar saldo con Mercado Pago (sandbox) -->
+            <div class="mt-6 pt-6 border-t border-gray-800/80">
+              <p class="text-xs text-gray-400 mb-3 text-center">o cargá el mismo monto con</p>
+              <button
+                type="button"
+                id="btn-mercadopago"
+                class="w-full border border-turquoiseNeon text-turquoiseNeon font-bold py-3 rounded-xl hover:bg-turquoiseNeon/10 transition duration-300 text-sm"
+              >
+                Mercado Pago
+              </button>
+              <div id="mercadopago-mensaje" class="text-xs text-center font-medium hidden pt-3"></div>
+            </div>
           </div>
         </div>
       </div>
