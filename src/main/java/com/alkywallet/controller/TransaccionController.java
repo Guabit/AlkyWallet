@@ -4,6 +4,7 @@ import com.alkywallet.dto.GastoPorCategoriaDTO;
 import com.alkywallet.dto.GastoPorTipoDTO;
 import com.alkywallet.dto.TransaccionDTO;
 import com.alkywallet.dto.TransferenciaRequestDTO;
+import com.alkywallet.dto.DepositoRequestDTO;
 import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.service.TransaccionService;
 import jakarta.validation.Valid;
@@ -45,15 +46,13 @@ public class TransaccionController {
 
     @PostMapping("/deposito")
     public ResponseEntity<Map<String, String>> realizarDeposito(
-            @RequestBody Map<String, Object> payload,
+            @jakarta.validation.Valid @RequestBody DepositoRequestDTO request,
             Authentication authentication
     ) {
         String email = authentication.getName();
-        Double monto = Double.valueOf(payload.get("monto").toString());
-        String monedaStr = (String) payload.get("moneda");
-        TipoMoneda moneda = (monedaStr != null) ? TipoMoneda.valueOf(monedaStr) : TipoMoneda.ARS;
+        TipoMoneda moneda = request.moneda() != null ? request.moneda() : TipoMoneda.ARS;
         
-        transaccionService.realizarDepositoPorEmail(email, monto, moneda);
+        transaccionService.realizarDepositoPorEmail(email, request.monto(), moneda);
         return ResponseEntity.ok(Map.of("mensaje", "Depósito realizado con éxito"));
     }
 

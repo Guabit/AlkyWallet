@@ -1,6 +1,7 @@
 package com.alkywallet.controller;
 
 import com.alkywallet.dto.CuentaDTO;
+import com.alkywallet.dto.CrearCuentaDTO;
 import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.service.CuentaService;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,9 @@ public class CuentaController {
     }
     
     @PostMapping
-    public ResponseEntity<CuentaDTO> crearCuenta(Authentication authentication, @RequestBody Map<String, TipoMoneda> payload) {
+    public ResponseEntity<CuentaDTO> crearCuenta(Authentication authentication, @jakarta.validation.Valid @RequestBody CrearCuentaDTO request) {
         String email = authentication.getName();
-        TipoMoneda moneda = payload.getOrDefault("moneda", TipoMoneda.ARS);
-        CuentaDTO cuenta = cuentaService.crearCuenta(email, moneda);
-        return ResponseEntity.ok(cuenta);
+        CuentaDTO cuenta = cuentaService.crearCuenta(email, request.moneda());
+        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(cuenta);
     }
 }
