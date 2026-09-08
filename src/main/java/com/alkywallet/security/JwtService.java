@@ -15,10 +15,12 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Servicio utilitario responsable de la generacion, firma, parseo y validacion de tokens JWT.
  */
+
 @Service
 public class JwtService {
 
@@ -27,6 +29,13 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
+
+    @PostConstruct
+    void validateSecret() {
+        if (secretKey == null || secretKey.isBlank() || secretKey.length() < 64) {
+            throw new IllegalStateException("JWT_SECRET no configurado o demasiado corto (mín. 256 bits)");
+        }
+    }
 
     /**
      * Genera un token JWT incluyendo los roles/permisos del usuario.

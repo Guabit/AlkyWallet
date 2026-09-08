@@ -56,6 +56,11 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
+                        // Endpoints que requieren rol ADMIN (Prevenir IDOR)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/usuarios/{id}").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/usuarios/{id}").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/usuarios/{id}").hasRole("ADMIN")
                         // La API privada requiere autenticación JWT
                         .requestMatchers("/api/**").authenticated()
                         // Cualquier otra ruta (páginas inexistentes) se permite para que Spring despache el 404
