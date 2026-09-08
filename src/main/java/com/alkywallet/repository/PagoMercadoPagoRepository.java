@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PagoMercadoPagoRepository extends JpaRepository<PagoMercadoPago, Long> {
     boolean existsByMercadoPagoPaymentId(String mercadoPagoPaymentId);
+    java.util.Optional<PagoMercadoPago> findByMercadoPagoPaymentId(String mercadoPagoPaymentId);
 }

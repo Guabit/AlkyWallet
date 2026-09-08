@@ -119,13 +119,22 @@ public class MercadoPagoService {
      * directo en el webhook) y, si está aprobado, acredita el saldo del
      * usuario indicado en el external_reference.
      */
-    @Transactional
-    public void procesarNotificacion(String paymentId) {
+        public void procesarNotificacion(String paymentId) {
         if (paymentId == null || paymentId.isBlank()) return;
-        if (pagoMercadoPagoRepository.existsByMercadoPagoPaymentId(paymentId)) {
-            log.info("Notificación de Mercado Pago {} ya procesada, se ignora", paymentId);
-            return;
+
+        // PRIMERO registrar el pago (falla si ya existe por unique constraint)
+        try {
+            pagoMercadoPagoRepository.save(PagoMercadoPago.builder()
+                    .mercadoPagoPaymentId(paymentId)
+                    .estado("PROCESANDO")
+                    .monto(BigDecimal.ZERO) // dummy
+                    .build());
+            pagoMercadoPagoRepository.flush(); // Forzar INSERT inmediato
+        } catch (DataIntegrityViolationException ex) {
+            log.info("Pago {} ya procesado, se ignora duplicado", paymentId);
+            return; // El otro thread ya lo está procesando
         }
+
         if (accessToken == null || accessToken.isBlank()) {
             log.warn("Se recibió una notificación de Mercado Pago pero no hay access token configurado");
             return;
@@ -152,6 +161,12 @@ public class MercadoPagoService {
 
         if (!"approved".equals(estado) || email == null || montoObj == null) {
             log.info("Pago {} de Mercado Pago con estado '{}', no se acredita", paymentId, estado);
+            // Actualizar estado a rechazado/etc y regresar
+            PagoMercadoPago pagoDoc = pagoMercadoPagoRepository.findByMercadoPagoPaymentId(paymentId).orElse(null);
+            if (pagoDoc != null) {
+                pagoDoc.setEstado(estado);
+                pagoMercadoPagoRepository.save(pagoDoc);
+            }
             return;
         }
 
@@ -165,20 +180,16 @@ public class MercadoPagoService {
         Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS).orElse(null);
         if (cuenta == null) return;
 
-        // Reutiliza la misma lógica de depósito que ya usa el resto de la app.
+        // Llamar a metodo @Transactional propio (via el autowired injected instance o delegar)
+        // Spring necesita llamar a traves del proxy. Como transaccionService ya lo es, esta bien.
         transaccionService.realizarDepositoPorEmail(email, monto);
 
-        try {
-            pagoMercadoPagoRepository.save(PagoMercadoPago.builder()
-                    .mercadoPagoPaymentId(paymentId)
-                    .cuenta(cuenta)
-                    .monto(BigDecimal.valueOf(monto))
-                    .estado(estado)
-                    .build());
-        } catch (DataIntegrityViolationException ex) {
-            // Dos notificaciones llegaron casi al mismo tiempo: el saldo ya se acreditó una sola vez
-            // gracias al chequeo de arriba en el 99% de los casos; esto es una red de seguridad extra.
-            log.warn("Pago {} de Mercado Pago procesado en paralelo, se ignora el duplicado", paymentId);
+        PagoMercadoPago pagoDoc = pagoMercadoPagoRepository.findByMercadoPagoPaymentId(paymentId).orElse(null);
+        if (pagoDoc != null) {
+            pagoDoc.setCuenta(cuenta);
+            pagoDoc.setMonto(BigDecimal.valueOf(monto));
+            pagoDoc.setEstado(estado);
+            pagoMercadoPagoRepository.save(pagoDoc);
         }
     }
 }

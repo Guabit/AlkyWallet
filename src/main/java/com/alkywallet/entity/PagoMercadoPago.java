@@ -31,10 +31,10 @@ public class PagoMercadoPago {
     private String mercadoPagoPaymentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cuenta_id", nullable = false)
+    @JoinColumn(name = "cuenta_id")
     private Cuenta cuenta;
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(precision = 19, scale = 2)
     private BigDecimal monto;
 
     @Column(nullable = false, length = 30)
