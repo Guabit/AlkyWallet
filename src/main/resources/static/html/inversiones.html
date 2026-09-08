@@ -133,7 +133,13 @@
           <!-- Nueva inversión -->
           <div class="bg-cardDark rounded-2xl p-6 md:p-8 border border-fuchsiaNeon/30 shadow-2xl glow-card-fuchsia">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-              <h3 class="text-lg font-bold text-white">Nueva inversión</h3>
+              <div class="flex items-center gap-3">
+                 <h3 class="text-lg font-bold text-white">Nueva inversión</h3>
+                 <div class="inline-flex bg-[#0D0B14] p-0.5 rounded-lg border border-gray-800 text-[11px]">
+                   <button id="btn-inversion-ars" type="button" class="px-2 py-0.5 rounded font-bold transition text-white bg-fuchsiaNeon">ARS</button>
+                   <button id="btn-inversion-usd" type="button" class="px-2 py-0.5 rounded font-semibold transition text-gray-400 hover:text-white">USD</button>
+                 </div>
+              </div>
               <span class="text-xs text-gray-400 mt-1 sm:mt-0">
                 Disponible: <strong id="saldo-disponible-inversion" class="text-turquoiseNeon font-mono">$ 0,00</strong>
               </span>
@@ -141,7 +147,7 @@
             <form id="form-invertir" class="flex flex-col sm:flex-row gap-3">
               <div class="flex items-center bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon flex-1">
                 <span class="text-gray-400 mr-2">$</span>
-                <input type="number" id="monto-invertir" min="1" step="0.01" placeholder="0.00" class="bg-transparent flex-1 text-sm text-white outline-none" />
+                <input type="number" id="monto-invertir" aria-label="Monto a invertir" min="1" step="0.01" placeholder="0.00" class="bg-transparent flex-1 text-sm text-white outline-none" />
               </div>
               <button type="submit" id="btn-invertir" class="bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-2.5 px-6 rounded-xl shadow-lg hover:opacity-90 transition glow-button text-sm whitespace-nowrap">
                 Invertir

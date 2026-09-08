@@ -22,33 +22,32 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
-    /**
-     * Define la cadena de filtros de seguridad HTTP y las reglas de autorizacion.
-     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                // Manejo de sesion sin estado (Stateless con JWT)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Endpoints publicos y protegidos
                 .authorizeHttpRequests(auth -> auth
-                        // Recursos estáticos del frontend (HTML, CSS, JS, imágenes)
-                        .requestMatchers("/",
+                        // Recursos estáticos del frontend (HTML, CSS, JS, imágenes) y ruta de error
+                        .requestMatchers(
+                                "/",
                                 "/index.html",
                                 "/html/**",
                                 "/css/**",
                                 "/js/**",
                                 "/assets/**",
-                                "/images/**"
+                                "/images/**",
+                                "/error",
+                                "/error/**"
                         ).permitAll()
-                        // Endpoints públicos de autenticación y registro de usuarios
-                        .requestMatchers("/api/auth/**", "/api/usuarios/registrar", "/error").permitAll()
-                        // Webhook de Mercado Pago: lo llaman los servidores de Mercado Pago,
-                        // no un usuario logueado, así que no puede requerir JWT.
-                        .requestMatchers("/api/mercadopago/webhook").permitAll()
-                        // Documentacion Swagger / OpenAPI
+                        // Endpoints públicos de la API
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/usuarios/registrar",
+                                "/api/mercadopago/webhook"
+                        ).permitAll()
+                        // Documentación Swagger / OpenAPI
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/api-docs/**",
@@ -57,10 +56,11 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        // El resto de la API requiere autenticación con JWT
-                        .anyRequest().authenticated())
+                        // La API privada requiere autenticación JWT
+                        .requestMatchers("/api/**").authenticated()
+                        // Cualquier otra ruta (páginas inexistentes) se permite para que Spring despache el 404
+                        .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider)
-                // Registra el filtro JWT antes del filtro de autenticacion de Spring
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

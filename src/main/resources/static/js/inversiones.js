@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    let monedaActiva = 'ARS';
+
+    const btnArs = document.getElementById('btn-inversion-ars');
+    const btnUsd = document.getElementById('btn-inversion-usd');
     const formInvertir = document.getElementById('form-invertir');
     const inputMonto = document.getElementById('monto-invertir');
     const btnInvertir = document.getElementById('btn-invertir');
@@ -12,18 +16,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     const listaInversiones = document.getElementById('lista-inversiones');
     const saldoDisponible = document.getElementById('saldo-disponible-inversion');
 
-    const formatearMoneda = (valor) =>
-        new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 2 }).format(Number(valor) || 0);
+    const formatearMoneda = (valor, moneda) => {
+        const simb = moneda === 'USD' ? 'US$' : '$';
+        const num = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(valor) || 0);
+        return `${simb} ${num}`;
+    };
+
+    function refrescarEstilosPestanas() {
+        if (!btnArs || !btnUsd) return;
+        if (monedaActiva === 'ARS') {
+            btnArs.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white shadow-md';
+            btnUsd.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition bg-transparent';
+        } else {
+            btnUsd.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-gradient-to-r from-turquoiseNeon to-blue-500 text-bgMain shadow-md';
+            btnArs.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition bg-transparent';
+        }
+    }
+
+    async function tieneCuentaEnMoneda(moneda) {
+        try {
+            const resp = await fetch('/api/cuentas', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (resp.ok) {
+                const cuentas = await resp.json();
+                return cuentas.some(c => c.tipoMoneda === moneda);
+            }
+        } catch(e) {}
+        return false;
+    }
+
+    async function cambiarMonedaOpcion(nuevaMoneda) {
+        if (monedaActiva === nuevaMoneda) return;
+        
+        if (nuevaMoneda === 'USD') {
+            const existe = await tieneCuentaEnMoneda('USD');
+            if (!existe) {
+                mostrarMensaje('Aún no tienes cuenta en USD. Ábrela gratuitamente desde el Dashboard.', 'error');
+                return;
+            }
+        }
+        
+        monedaActiva = nuevaMoneda;
+        refrescarEstilosPestanas();
+        await Promise.all([cargarSaldo(), cargarInversiones()]);
+    }
+
+    if (btnArs) btnArs.addEventListener('click', () => cambiarMonedaOpcion('ARS'));
+    if (btnUsd) btnUsd.addEventListener('click', () => cambiarMonedaOpcion('USD'));
 
     async function cargarSaldo() {
         try {
-            const response = await fetch('/api/cuentas/balance', {
+            const response = await fetch(`/api/cuentas/balance?moneda=${monedaActiva}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
                 const data = await response.json();
                 const saldo = data.balance ?? data.saldo ?? data.amount ?? 0;
-                if (saldoDisponible) saldoDisponible.textContent = formatearMoneda(saldo);
+                if (saldoDisponible) saldoDisponible.textContent = formatearMoneda(saldo, monedaActiva);
+            } else {
+                if (saldoDisponible) saldoDisponible.textContent = formatearMoneda(0, monedaActiva);
             }
         } catch (error) {
             console.error('Error al obtener el saldo:', error);
@@ -33,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function cargarInversiones() {
         if (!listaInversiones) return;
         try {
-            const response = await fetch('/api/inversiones', {
+            const response = await fetch(`/api/inversiones?moneda=${monedaActiva}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -58,13 +108,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderInversiones(inversiones) {
         if (!Array.isArray(inversiones) || inversiones.length === 0) {
-            listaInversiones.innerHTML = '<p class="text-xs text-center text-gray-500 py-4">Todavía no tenés inversiones activas.</p>';
+            listaInversiones.innerHTML = `<p class="text-xs text-center text-gray-500 py-4">Todavía no tenés inversiones activas en ${monedaActiva}.</p>`;
             return;
         }
 
         listaInversiones.innerHTML = '';
 
         inversiones.forEach((inv) => {
+            const m = inv.moneda || monedaActiva;
             const tasaPorcentaje = (Number(inv.tasaAnualNominal) * 100).toFixed(1);
             const card = document.createElement('div');
             card.className = 'bg-[#0D0B14] p-4 rounded-xl border border-gray-800/80 hover:border-gray-700 transition';
@@ -73,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-semibold text-white">${formatearMoneda(inv.montoInvertido)}</span>
+                            <span class="text-sm font-semibold text-white">${formatearMoneda(inv.montoInvertido, m)}</span>
                             <span class="text-[11px] text-gray-400 bg-white/5 px-2 py-0.5 rounded-full">TNA ${tasaPorcentaje}%</span>
                             ${inv.activa
                                 ? '<span class="text-[11px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">Activa</span>'
@@ -81,13 +132,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                         <p class="text-xs text-gray-400 mt-1">
                             ${inv.diasTranscurridos} día(s) · Rendimiento simulado:
-                            <span class="text-emerald-400 font-semibold">+${formatearMoneda(inv.rendimientoSimulado)}</span>
+                            <span class="text-emerald-400 font-semibold">+${formatearMoneda(inv.rendimientoSimulado, m)}</span>
                         </p>
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="text-right">
                             <p class="text-[11px] text-gray-400">Valor actual</p>
-                            <p class="text-sm font-bold text-turquoiseNeon">${formatearMoneda(inv.valorActual)}</p>
+                            <p class="text-sm font-bold text-turquoiseNeon">${formatearMoneda(inv.valorActual, m)}</p>
                         </div>
                         ${inv.activa
                             ? `<button data-id="${inv.id}" class="btn-rescatar bg-gray-800 hover:bg-gray-700 text-turquoiseNeon px-4 py-2 rounded-xl text-xs font-bold transition border border-gray-700">Rescatar</button>`
@@ -135,13 +186,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             btnInvertir.disabled = true;
             try {
-                const response = await fetch('/api/inversiones', {
+                // FIXED ENDPOINT TO /api/inversiones/invertir 
+                const response = await fetch('/api/inversiones/invertir', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ monto })
+                    body: JSON.stringify({ monto: monto, moneda: monedaActiva })
                 });
 
                 if (response.ok) {
@@ -168,6 +220,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         mensajeInvertir.classList.add(tipo === 'exito' ? 'text-emerald-400' : 'text-red-400');
         setTimeout(() => mensajeInvertir.classList.add('hidden'), 4000);
     }
-
+    
+    refrescarEstilosPestanas();
     await Promise.all([cargarSaldo(), cargarInversiones()]);
 });

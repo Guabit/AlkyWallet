@@ -1,6 +1,8 @@
 package com.alkywallet.service;
 
 import com.alkywallet.dto.InversionDTO;
+import com.alkywallet.exception.ResourceNotFoundException;
+import com.alkywallet.exception.SaldoInsuficienteException;
 import com.alkywallet.entity.CategoriaTransaccion;
 import com.alkywallet.entity.Cuenta;
 import com.alkywallet.entity.Inversion;
@@ -24,21 +26,13 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-/**
- * Simula una colocación en un fondo común de inversión (FCI) tipo
- * "money market" dentro de la propia billetera: al invertir se descuenta
- * el saldo de la Cuenta ARS del usuario, y al rescatar se devuelve el
- * capital más un rendimiento calculado con devengamiento diario simple
- * (montoInvertido * tasaAnualNominal / 365 * díasTranscurridos).
- *
- * Es una simulación con fines demostrativos: no representa una inversión
- * real ni una tasa de mercado vigente.
- */
 @Service
 @RequiredArgsConstructor
 public class InversionService {
 
     private static final int DIAS_ANIO = 365;
+    private static final BigDecimal TASA_ARS = new BigDecimal("0.40"); // 40% TNA
+    private static final BigDecimal TASA_USD = new BigDecimal("0.04"); // 4% TNA
 
     private final InversionRepository inversionRepository;
     private final CuentaRepository cuentaRepository;
@@ -46,47 +40,68 @@ public class InversionService {
     private final TransaccionRepository transaccionRepository;
 
     @Transactional
-    public InversionDTO invertir(String email, Double monto) {
+    public InversionDTO invertir(String email, Double monto, TipoMoneda tipoMoneda) {
         if (monto == null || monto <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El monto a invertir debe ser mayor a cero");
         }
-
-        Cuenta cuenta = obtenerCuentaArsPorEmail(email);
+        
+        TipoMoneda moneda = (tipoMoneda != null) ? tipoMoneda : TipoMoneda.ARS;
+        Cuenta cuenta = obtenerCuentaPorEmailYMoneda(email, moneda);
         BigDecimal montoBigDecimal = BigDecimal.valueOf(monto);
 
         if (cuenta.getSaldo().compareTo(montoBigDecimal) < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar esta inversión");
+            throw new SaldoInsuficienteException("Saldo insuficiente en " + moneda + " para realizar esta inversión");
+        }
+        
+        // Locking to prevent concurrent transfers depleting the account
+        cuenta = cuentaRepository.findByIdForUpdate(cuenta.getId())
+                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada"));
+                 
+        if (cuenta.getSaldo().compareTo(montoBigDecimal) < 0) {
+            throw new SaldoInsuficienteException("Saldo insuficiente en " + moneda + " para realizar esta inversión");
         }
 
         cuenta.setSaldo(cuenta.getSaldo().subtract(montoBigDecimal));
         cuentaRepository.save(cuenta);
 
+        BigDecimal tasaSimulada = (moneda == TipoMoneda.USD) ? TASA_USD : TASA_ARS;
+
         Inversion inversion = Inversion.builder()
                 .cuenta(cuenta)
                 .montoInvertido(montoBigDecimal)
+                .tasaAnualNominal(tasaSimulada)
                 .activa(true)
                 .build();
         inversion = inversionRepository.save(inversion);
 
         registrarMovimiento(cuenta, TipoTransaccion.EGRESO, montoBigDecimal,
-                "Inversión en FCI AlkyWallet (simulado)", CategoriaTransaccion.INVERSION);
+                "Inversión en FCI AlkyWallet (simulado)");
 
         return toDTO(inversion);
     }
 
     @Transactional
     public InversionDTO rescatar(String email, Long inversionId) {
-        Cuenta cuenta = obtenerCuentaArsPorEmail(email);
-
-        Inversion inversion = inversionRepository.findByIdAndCuentaId(inversionId, cuenta.getId())
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+                
+        // Here we first search the inversion, no matter the currency
+        Inversion inversion = inversionRepository.findById(inversionId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inversión no encontrada"));
+                
+        if (!inversion.getCuenta().getUsuario().getId().equals(usuario.getId())) {
+             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La inversión no te pertenece");
+        }
 
         if (!inversion.isActiva()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esta inversión ya fue rescatada");
         }
+        
+        Cuenta cuenta = cuentaRepository.findByIdForUpdate(inversion.getCuenta().getId())
+                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada"));
 
         BigDecimal rendimiento = calcularRendimiento(inversion, LocalDateTime.now());
-        BigDecimal valorFinal = inversion.getMontoInvertido().add(rendimiento);
+        BigDecimal valorFinal = inversion.getMontoInvertido().add(rendimiento).setScale(2, RoundingMode.HALF_EVEN);
 
         cuenta.setSaldo(cuenta.getSaldo().add(valorFinal));
         cuentaRepository.save(cuenta);
@@ -96,50 +111,56 @@ public class InversionService {
         inversion = inversionRepository.save(inversion);
 
         registrarMovimiento(cuenta, TipoTransaccion.INGRESO, valorFinal,
-                "Rescate de inversión FCI + rendimiento simulado", CategoriaTransaccion.INVERSION);
+                "Rescate de inversión FCI + rendimiento simulado");
 
         return toDTO(inversion);
     }
 
     @Transactional(readOnly = true)
-    public List<InversionDTO> obtenerPorEmail(String email) {
-        Cuenta cuenta = obtenerCuentaArsPorEmail(email);
-        return inversionRepository.findByCuentaIdOrderByFechaInicioDesc(cuenta.getId())
-                .stream()
+    public List<InversionDTO> obtenerPorEmail(String email, TipoMoneda moneda) {
+        if (moneda != null) {
+            Cuenta cuenta = obtenerCuentaPorEmailYMoneda(email, moneda);
+            return inversionRepository.findByCuentaIdOrderByFechaInicioDesc(cuenta.getId())
+                    .stream().map(this::toDTO).toList();
+        } else {
+             // If missing, return all user's accounts investments
+             Usuario usuario = userRepository.findByEmail(email).orElseThrow();
+             List<Cuenta> cuentas = cuentaRepository.findByUsuarioId(usuario.getId());
+             return cuentas.stream()
+                .flatMap(c -> inversionRepository.findByCuentaIdOrderByFechaInicioDesc(c.getId()).stream())
                 .map(this::toDTO)
+                .sorted((a, b) -> b.getFechaInicio().compareTo(a.getFechaInicio()))
                 .toList();
+        }
     }
 
-    private Cuenta obtenerCuentaArsPorEmail(String email) {
+    private Cuenta obtenerCuentaPorEmailYMoneda(String email, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        return cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
+        return cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada en " + moneda));
     }
 
     private void registrarMovimiento(Cuenta cuenta, TipoTransaccion tipo, BigDecimal monto,
-                                      String concepto, CategoriaTransaccion categoria) {
+                                      String concepto) {
         Transaccion transaccion = Transaccion.builder()
                 .monto(monto)
                 .fecha(LocalDateTime.now())
                 .tipo(tipo)
                 .concepto(concepto)
-                .categoria(categoria)
+                .categoria(CategoriaTransaccion.INVERSION)
                 .cuenta(cuenta)
                 .build();
         transaccionRepository.save(transaccion);
     }
 
-    /**
-     * Devengamiento diario simple: montoInvertido * tasaAnualNominal / 365 * díasTranscurridos.
-     */
     private BigDecimal calcularRendimiento(Inversion inversion, LocalDateTime hasta) {
         long dias = Math.max(0, ChronoUnit.DAYS.between(inversion.getFechaInicio(), hasta));
         return inversion.getMontoInvertido()
                 .multiply(inversion.getTasaAnualNominal())
                 .multiply(BigDecimal.valueOf(dias))
-                .divide(BigDecimal.valueOf(DIAS_ANIO), 2, RoundingMode.HALF_UP);
+                .divide(BigDecimal.valueOf(DIAS_ANIO), 2, RoundingMode.HALF_EVEN);
     }
 
     private InversionDTO toDTO(Inversion inversion) {
@@ -149,13 +170,14 @@ public class InversionService {
 
         return InversionDTO.builder()
                 .id(inversion.getId())
+                .moneda(inversion.getCuenta().getTipoMoneda())
                 .montoInvertido(inversion.getMontoInvertido())
                 .tasaAnualNominal(inversion.getTasaAnualNominal())
                 .fechaInicio(inversion.getFechaInicio())
                 .fechaRescate(inversion.getFechaRescate())
                 .diasTranscurridos(dias)
                 .rendimientoSimulado(rendimiento)
-                .valorActual(inversion.getMontoInvertido().add(rendimiento))
+                .valorActual(inversion.getMontoInvertido().add(rendimiento).setScale(2, RoundingMode.HALF_EVEN))
                 .activa(inversion.isActiva())
                 .build();
     }

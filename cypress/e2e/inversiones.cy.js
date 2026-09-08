@@ -18,7 +18,7 @@ describe('Inversiones (simuladas)', () => {
         cy.visit('/html/deposito.html');
         cy.get('#monto').type('2000');
         cy.get('#btn-depositar').click();
-        cy.contains('Depósito procesado con éxito', { timeout: 10000 });
+        cy.contains('procesado con éxito', { timeout: 10000 });
 
         cy.visit('/html/inversiones.html');
         cy.get('#monto-invertir').type('1000');

@@ -72,7 +72,7 @@ class InversionServiceTest {
             return i;
         });
 
-        InversionDTO resultado = inversionService.invertir("ana@mail.com", 200.0);
+        InversionDTO resultado = inversionService.invertir("ana@mail.com", 200.0, com.alkywallet.entity.TipoMoneda.ARS);
 
         assertEquals(new BigDecimal("800.00"), cuenta.getSaldo());
         assertTrue(resultado.isActiva());
@@ -89,7 +89,7 @@ class InversionServiceTest {
         when(userRepository.findByEmail("ana@mail.com")).thenReturn(Optional.of(usuario));
         when(cuentaRepository.findByUsuarioIdAndTipoMoneda(1L, TipoMoneda.ARS)).thenReturn(Optional.of(cuenta));
 
-        assertThrows(ResponseStatusException.class, () -> inversionService.invertir("ana@mail.com", 5000.0));
+        assertThrows(ResponseStatusException.class, () -> inversionService.invertir("ana@mail.com", 5000.0, com.alkywallet.entity.TipoMoneda.ARS));
 
         assertEquals(new BigDecimal("1000.00"), cuenta.getSaldo());
         verify(inversionRepository, never()).save(any(Inversion.class));

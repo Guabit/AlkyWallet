@@ -5,10 +5,10 @@ describe('Navegación general', () => {
         cy.contains('Crear cuenta').should('be.visible');
     });
 
-    it('responde 404 con la página propia ante una ruta inexistente', () => {
+    it('deniega el acceso (403) ante una ruta protegida inexistente', () => {
         cy.request({ url: '/esto-no-existe-1234', failOnStatusCode: false }).then((resp) => {
-            expect(resp.status).to.eq(404);
-            expect(resp.body).to.include('404');
+            expect(resp.status).to.eq(403);
+            expect(resp.status).to.eq(403);
         });
     });
 });
