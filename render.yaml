@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: alky-wallet
+    env: docker
+    plan: free
+    region: ohio
+    branch: main
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        value: '8080'
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: alky-wallet-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: alky-wallet-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: alky-wallet-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: alky-wallet-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: alky-wallet-db
+          property: password
+
+databases:
+  - name: alky-wallet-db
+    plan: free
+    region: ohio
+    databaseName: alky_wallet

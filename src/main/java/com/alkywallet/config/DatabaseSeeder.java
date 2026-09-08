@@ -31,7 +31,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     @Transactional
-    public void run(String... args) {
+    public void run(@org.springframework.lang.NonNull String... args) {
         if (userRepository.findByEmail(adminEmail).isEmpty()) {
             log.info("Creando usuario ADMIN por defecto...");
             Usuario admin = Usuario.builder()
@@ -48,7 +48,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             log.info("Creando cuenta ARS para el ADMIN...");
             Cuenta cuentaAdmin = Cuenta.builder()
                     .usuario(admin)
-                    .saldo(0.0)
+                    .saldo(java.math.BigDecimal.ZERO)
                     .tipoMoneda(TipoMoneda.ARS)
                     .isDeleted(false)
                     .build();

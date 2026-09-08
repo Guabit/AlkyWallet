@@ -169,11 +169,11 @@ public class TransaccionService {
             throw new SaldoInsuficienteException("Saldo insuficiente en la cuenta origen");
         }
 
-        String infoDestino = (cuentaDestino.getUsuario() != null && cuentaDestino.getUsuario().getNombre() + " " + cuentaDestino.getUsuario().getApellido() != null)
+        String infoDestino = (cuentaDestino.getUsuario() != null)
                 ? cuentaDestino.getUsuario().getNombre() + " " + cuentaDestino.getUsuario().getApellido()
                 : String.valueOf(cuentaDestinoId);
 
-        String infoOrigen = (cuentaOrigen.getUsuario() != null && cuentaOrigen.getUsuario().getNombre() + " " + cuentaOrigen.getUsuario().getApellido() != null)
+        String infoOrigen = (cuentaOrigen.getUsuario() != null)
                 ? cuentaOrigen.getUsuario().getNombre() + " " + cuentaOrigen.getUsuario().getApellido()
                 : String.valueOf(cuentaOrigenId);
 
