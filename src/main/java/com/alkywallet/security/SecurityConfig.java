@@ -57,6 +57,8 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
                         // Endpoints que requieren rol ADMIN (Prevenir IDOR)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/usuarios/me").authenticated()
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/usuarios/me").authenticated()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/usuarios/{id}").hasRole("ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/usuarios/{id}").hasRole("ADMIN")
