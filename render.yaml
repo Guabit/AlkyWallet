@@ -4,7 +4,6 @@ services:
     env: docker
     plan: free
     region: ohio
-    branch: main
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
