@@ -7,6 +7,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const elTablaWrapper = document.getElementById('historial-tabla-wrapper');
     const tbody = document.getElementById('historial-tbody');
 
+    const ETIQUETAS_CATEGORIA = {
+        COMIDA: 'Comida',
+        TRANSPORTE: 'Transporte',
+        SERVICIOS: 'Servicios',
+        ENTRETENIMIENTO: 'Entretenimiento',
+        SALUD: 'Salud',
+        EDUCACION: 'Educación',
+        INVERSION: 'Inversión',
+        TRANSFERENCIA: 'Transferencia',
+        OTROS: 'Otros'
+    };
+
     if (!token) {
         window.location.href = 'ingresar.html';
         return;
@@ -51,19 +63,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         elError.classList.remove('hidden');
     }
 
-    const ETIQUETAS_CATEGORIA = {
-        COMIDA: 'Comida',
-        TRANSPORTE: 'Transporte',
-        SERVICIOS: 'Servicios',
-        ENTRETENIMIENTO: 'Entretenimiento',
-        SALUD: 'Salud',
-        EDUCACION: 'Educación',
-        INVERSION: 'Inversión',
-        TRANSFERENCIA: 'Transferencia',
-        OTROS: 'Otros'
-    };
+    // Determina la etiqueta precisa del movimiento según tipo, categoría y concepto
+    function obtenerTextoTipo(tipo, categoria, concepto) {
+        const desc = (concepto || '').toLowerCase();
+
+        if (tipo === 'DEPOSITO') {
+            return 'Depósito';
+        }
+
+        if (categoria === 'INVERSION' || desc.includes('inversión') || desc.includes('inversion')) {
+            return tipo === 'INGRESO' ? 'Rescate Inversión' : 'Inversión';
+        }
+
+        if (categoria === 'SERVICIOS' || desc.includes('telepase') || desc.includes('pedidosya') || desc.includes('pago')) {
+            return 'Pago de Servicio';
+        }
+
+        return tipo === 'INGRESO' ? 'Transferencia Recibida' : 'Transferencia Enviada';
+    }
 
     function renderMovimientos(movimientos) {
+        tbody.innerHTML = '';
         movimientos.forEach((mov) => {
             const descripcion = mov.concepto ?? '';
             const fecha = formatearFecha(mov.fecha);
@@ -87,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             tdTipo.className = 'py-3.5';
             const badge = document.createElement('span');
             badge.classList.add('historial-badge', esIngreso ? 'historial-badge-ingreso' : 'historial-badge-egreso');
-            badge.textContent = tipo === 'DEPOSITO' ? 'Depósito' : (esIngreso ? 'Transferencia Recibida' : 'Transferencia Enviada');
+            badge.textContent = obtenerTextoTipo(tipo, categoria, descripcion);
             tdTipo.appendChild(badge);
 
             const tdCategoria = document.createElement('td');
