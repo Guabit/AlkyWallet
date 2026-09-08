@@ -19,4 +19,8 @@ public interface CuentaRepository extends JpaRepository<Cuenta, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT c FROM Cuenta c WHERE c.id = :id")
     Optional<Cuenta> findByIdForUpdate(@Param("id") Long id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT c FROM Cuenta c WHERE c.usuario.id = :userId AND c.tipoMoneda = :moneda")
+    Optional<Cuenta> findByUsuarioIdAndTipoMonedaForUpdate(@Param("userId") Long userId, @Param("moneda") TipoMoneda moneda);
 }

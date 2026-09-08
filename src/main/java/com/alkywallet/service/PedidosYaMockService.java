@@ -43,7 +43,7 @@ public class PedidosYaMockService {
         Usuario usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMonedaForUpdate(usuario.getId(), TipoMoneda.ARS)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
 
         BigDecimal montoBigDecimal = BigDecimal.valueOf(monto);

@@ -66,7 +66,7 @@ public class TransaccionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El monto debe ser mayor a cero");
         }
 
-        Cuenta cuenta = cuentaRepository.findById(cuentaId)
+        Cuenta cuenta = cuentaRepository.findByIdForUpdate(cuentaId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
 
         if (cuenta.isDeleted()) {
