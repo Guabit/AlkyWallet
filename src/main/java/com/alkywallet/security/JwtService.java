@@ -32,7 +32,7 @@ public class JwtService {
 
     @PostConstruct
     void validateSecret() {
-        if (secretKey == null || secretKey.isBlank() || secretKey.length() < 64) {
+        if (secretKey == null || secretKey.isBlank() || secretKey.length() < 32) {
             throw new IllegalStateException("JWT_SECRET no configurado o demasiado corto (mín. 256 bits)");
         }
     }
