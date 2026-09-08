@@ -2,7 +2,6 @@ package com.alkywallet.controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,11 +24,11 @@ import java.util.Map;
  * GlobalExceptionHandler (para llamadas que esperan application/json).
  */
 @Controller
-public class ErrorPageController implements ErrorController {
+public class ErrorPageController {
 
     private static final String PAGINA_404 = "static/error/404.html";
 
-    @RequestMapping("/error")
+    @RequestMapping("/error-page")
     public ResponseEntity<?> manejarError(HttpServletRequest request) {
         int status = obtenerStatus(request);
         String accept = request.getHeader("Accept");

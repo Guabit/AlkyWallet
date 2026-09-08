@@ -26,9 +26,8 @@ public class OllamaClient {
     @Value("${ollama.base-url:http://localhost:11434}")
     private String baseUrl;
 
-    @Value("${ollama.model:llama3.3:8b}")
-    private String modelo;
-
+   @Value("${ollama.model:qwen2.5:7b}")
+private String modelo;
     /**
      * Envía un prompt a Ollama y devuelve el texto generado. Lanza una
      * excepción si Ollama no está corriendo o el modelo no está descargado;

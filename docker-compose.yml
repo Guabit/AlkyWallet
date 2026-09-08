@@ -12,5 +12,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  app:
+    build: .
+    container_name: alky-wallet-app
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_started
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: alky_wallet
+      DB_USER: user
+      DB_PASSWORD: 12345
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres_data:

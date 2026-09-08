@@ -97,7 +97,11 @@ public class MercadoPagoService {
             }
 
             // En sandbox usamos sandbox_init_point; si no viene, caemos al init_point normal.
-            String checkoutUrl = (String) respuesta.getOrDefault("sandbox_init_point", respuesta.get("init_point"));
+            Object checkoutValue = respuesta.get("sandbox_init_point");
+            if (checkoutValue == null) {
+                checkoutValue = respuesta.get("init_point");
+            }
+            String checkoutUrl = (String) checkoutValue;
             String preferenceId = (String) respuesta.get("id");
 
             return new MercadoPagoPreferenciaResponseDTO(checkoutUrl, preferenceId);
