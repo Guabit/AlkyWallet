@@ -247,8 +247,8 @@ function mostrarNotificacionDashboard(mensaje, tipo = 'error') {
     const toast = document.createElement('div');
     toast.id = 'toast-notificacion';
     const esError = tipo === 'error';
-    const colorBorder = esError ? 'border-rose-500/50' : 'border-turquoiseNeon/50';
-    const colorText = esError ? 'text-rose-400' : 'text-turquoiseNeon';
+    const colorBorder = esError ? 'border-rose-500/50' : 'border-emerald-500/50';
+    const colorText = esError ? 'text-rose-400' : (tipo === 'exito' ? 'text-emerald-400' : 'text-turquoiseNeon');
     
     toast.className = `fixed bottom-10 right-1/2 translate-x-1/2 md:bottom-10 md:right-10 md:translate-x-0 z-50 bg-[#161221] border ${colorBorder} ${colorText} px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300`;
     

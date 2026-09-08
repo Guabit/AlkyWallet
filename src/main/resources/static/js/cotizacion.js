@@ -97,5 +97,63 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (inputUsd) inputUsd.addEventListener('input', () => { if (!bloquearEventos) recalcularDesdeUsd(); });
     if (selectCasa) selectCasa.addEventListener('change', recalcularDesdeArs);
 
+    
+    const btnComprarUsd = document.getElementById('btn-comprar-usd');
+    const btnVenderUsd = document.getElementById('btn-vender-usd');
+
+    async function ejecutarCanje(monedaOrigen, monedaDestino, montoOrigen) {
+        if (!token) return;
+        
+        // Asumiendo que dashboard.js tiene accesible las notificaciones...
+        const showNotif = typeof window.mostrarNotificacionDashboard === 'function' 
+            ? window.mostrarNotificacionDashboard 
+            : (msg) => alert(msg);
+
+        const m = parseFloat(montoOrigen);
+        if (isNaN(m) || m <= 0) {
+            showNotif('Ingrese un monto válido para operar.', 'error');
+            return;
+        }
+
+        try {
+            const resp = await fetch('/api/conversiones', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    monedaOrigen: monedaOrigen,
+                    monedaDestino: monedaDestino,
+                    monto: m
+                })
+            });
+
+            if (resp.ok) {
+                showNotif(`¡Conversión exitosa de ${m.toFixed(2)} ${monedaOrigen} a ${monedaDestino}!`, 'exito');
+                // Refrescar el dashboard
+                if (typeof window.sincronizarDashboard === 'function') {
+                    window.sincronizarDashboard();
+                }
+                if (inputArs) inputArs.value = '';
+                if (inputUsd) inputUsd.value = '';
+            } else {
+                const err = await resp.json().catch(() => null);
+                showNotif(err?.mensaje || err?.message || 'Error al procesar el cambio.', 'error');
+            }
+        } catch (e) {
+            console.error('Error al operar divisas', e);
+            showNotif('Error de conexión al servidor.', 'error');
+        }
+    }
+
+    if (btnComprarUsd) btnComprarUsd.addEventListener('click', () => {
+        ejecutarCanje('ARS', 'USD', inputArs.value);
+    });
+
+    if (btnVenderUsd) btnVenderUsd.addEventListener('click', () => {
+        ejecutarCanje('USD', 'ARS', inputUsd.value);
+    });
+
     await cargarCotizaciones();
 });
