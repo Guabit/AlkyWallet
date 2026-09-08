@@ -86,7 +86,7 @@ public class InversionService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
                 
         // Here we first search the inversion, no matter the currency
-        Inversion inversion = inversionRepository.findById(inversionId)
+        Inversion inversion = inversionRepository.findByIdForUpdate(inversionId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inversión no encontrada"));
                 
         if (!inversion.getCuenta().getUsuario().getId().equals(usuario.getId())) {
