@@ -37,7 +37,7 @@ public class TransaccionService {
     public void realizarDepositoPorEmail(String email, Double monto) {
         realizarDepositoPorEmail(email, monto, TipoMoneda.ARS);
     }
-    
+
     @Transactional
     public void realizarDepositoPorEmail(String email, Double monto, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
@@ -97,13 +97,13 @@ public class TransaccionService {
 
     @Transactional
     public void realizarTransferenciaPorEmail(String emailOrigen, String destinatarioEmail, Double monto,
-                                               CategoriaTransaccion categoria) {
+                                              CategoriaTransaccion categoria) {
         realizarTransferenciaPorEmail(emailOrigen, destinatarioEmail, monto, categoria, TipoMoneda.ARS);
     }
-    
+
     @Transactional
     public void realizarTransferenciaPorEmail(String emailOrigen, String destinatarioEmail, Double monto,
-                                               CategoriaTransaccion categoria, TipoMoneda moneda) {
+                                              CategoriaTransaccion categoria, TipoMoneda moneda) {
         if (emailOrigen.trim().equalsIgnoreCase(destinatarioEmail.trim())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No podés transferirte dinero a vos mismo");
         }
@@ -130,7 +130,7 @@ public class TransaccionService {
 
     @Transactional
     public void realizarTransferencia(Long cuentaOrigenId, Long cuentaDestinoId, Double monto,
-                                       CategoriaTransaccion categoriaSolicitada) {
+                                      CategoriaTransaccion categoriaSolicitada) {
         if (cuentaOrigenId == null || cuentaDestinoId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Las cuentas de origen y destino son obligatorias");
         }
@@ -146,7 +146,7 @@ public class TransaccionService {
         // PREVENT DEADLOCKS: Order acquiring pessimistic locks by ID
         Long minId = Math.min(cuentaOrigenId, cuentaDestinoId);
         Long maxId = Math.max(cuentaOrigenId, cuentaDestinoId);
-        
+
         Cuenta firstLock = cuentaRepository.findByIdForUpdate(minId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta " + minId + " no encontrada"));
         Cuenta secondLock = cuentaRepository.findByIdForUpdate(maxId)
@@ -158,7 +158,7 @@ public class TransaccionService {
         if (cuentaOrigen.isDeleted() || cuentaDestino.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede transferir desde o hacia una cuenta inactiva");
         }
-        
+
         if (cuentaOrigen.getTipoMoneda() != cuentaDestino.getTipoMoneda()) {
             throw new MonedaIncompatibleException("No se pueden realizar transferencias directas entre diferentes monedas");
         }
@@ -169,13 +169,8 @@ public class TransaccionService {
             throw new SaldoInsuficienteException("Saldo insuficiente en la cuenta origen");
         }
 
-        String infoDestino = (cuentaDestino.getUsuario() != null)
-                ? cuentaDestino.getUsuario().getNombre() + " " + cuentaDestino.getUsuario().getApellido()
-                : String.valueOf(cuentaDestinoId);
-
-        String infoOrigen = (cuentaOrigen.getUsuario() != null)
-                ? cuentaOrigen.getUsuario().getNombre() + " " + cuentaOrigen.getUsuario().getApellido()
-                : String.valueOf(cuentaOrigenId);
+        String infoDestino = obtenerNombreOEmail(cuentaDestino);
+        String infoOrigen = obtenerNombreOEmail(cuentaOrigen);
 
         // --- Débito en cuenta origen ---
         cuentaOrigen.setSaldo(cuentaOrigen.getSaldo().subtract(montoBigDecimal));
@@ -206,6 +201,23 @@ public class TransaccionService {
         transaccionRepository.save(ingreso);
     }
 
+    private String obtenerNombreOEmail(Cuenta cuenta) {
+        if (cuenta != null && cuenta.getUsuario() != null) {
+            Usuario usuario = cuenta.getUsuario();
+            String nombre = usuario.getNombre() != null ? usuario.getNombre().trim() : "";
+            String apellido = usuario.getApellido() != null ? usuario.getApellido().trim() : "";
+            String nombreCompleto = (nombre + " " + apellido).trim();
+
+            if (!nombreCompleto.isEmpty()) {
+                return nombreCompleto;
+            }
+            if (usuario.getEmail() != null && !usuario.getEmail().isBlank()) {
+                return usuario.getEmail();
+            }
+        }
+        return "Usuario";
+    }
+
     @Transactional(readOnly = true)
     public List<TransaccionDTO> obtenerHistorialPorEmail(String email) {
         return obtenerHistorialPorEmail(email, TipoMoneda.ARS);
@@ -226,7 +238,7 @@ public class TransaccionService {
     public List<GastoPorTipoDTO> obtenerReporteGastosPorEmail(String email) {
         return obtenerReporteGastosPorEmail(email, TipoMoneda.ARS);
     }
-    
+
     @Transactional(readOnly = true)
     public List<GastoPorTipoDTO> obtenerReporteGastosPorEmail(String email, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
@@ -242,7 +254,7 @@ public class TransaccionService {
     public List<GastoPorCategoriaDTO> obtenerReporteCategoriasPorEmail(String email) {
         return obtenerReporteCategoriasPorEmail(email, TipoMoneda.ARS);
     }
-    
+
     @Transactional(readOnly = true)
     public List<GastoPorCategoriaDTO> obtenerReporteCategoriasPorEmail(String email, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
@@ -259,7 +271,7 @@ public class TransaccionService {
     public BigDecimal obtenerTotalGastadoEsteMesPorEmail(String email) {
         return obtenerTotalGastadoEsteMesPorEmail(email, TipoMoneda.ARS);
     }
-    
+
     @Transactional(readOnly = true)
     public BigDecimal obtenerTotalGastadoEsteMesPorEmail(String email, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
