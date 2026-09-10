@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const params = new URLSearchParams(window.location.search);
         const destino = params.get('to');
         const monto = params.get('amount');
+        const moneda = params.get('currency');
 
         if (destino && inputDestino) {
             inputDestino.value = destino;
@@ -29,6 +30,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const montoNumerico = parseFloat(monto);
             if (!isNaN(montoNumerico) && montoNumerico > 0) {
                 inputMonto.value = montoNumerico.toFixed(2);
+            }
+        }
+        // Si el QR especificó USD y el usuario tiene cuenta USD, cambiar la moneda
+        if (moneda === 'USD' && selectCuentaOrigen) {
+            monedaActual = 'USD';
+            selectCuentaOrigen.value = 'USD';
+            if (labelCuentaTipo) {
+                labelCuentaTipo.textContent = 'Dólares Estadounidenses';
             }
         }
     }

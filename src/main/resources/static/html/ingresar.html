@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="../css/custom.css">
     <script defer src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script defer src="../js/ingresar.js"></script>
+    <script defer src="../js/password-toggle.js"></script>
 
 </head>
 <body class="bg-bgMain text-textLight min-h-screen flex items-center justify-center relative overflow-hidden font-sans">
@@ -88,8 +89,12 @@
 
                 <div>
                     <label for="Ipassword" class="block text-sm text-gray-400 mb-1 font-medium">Password</label>
-                    <input type="password" id="Ipassword" placeholder="••••••••"
-                           class="w-full bg-[#0D0B14] text-white border border-gray-700 rounded-lg px-4 py-2.5 outline-none focus:border-turquoiseNeon focus:ring-1 focus:ring-turquoiseNeon transition duration-200">
+                    <div class="relative">
+                        <input type="password" id="Ipassword" placeholder="••••••••"
+                               class="w-full bg-[#0D0B14] text-white border border-gray-700 rounded-lg pl-4 pr-11 py-2.5 outline-none focus:border-turquoiseNeon focus:ring-1 focus:ring-turquoiseNeon transition duration-200">
+                        <button type="button" data-toggle-password="Ipassword" aria-label="Mostrar u ocultar contraseña"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-turquoiseNeon transition focus:outline-none p-1"></button>
+                    </div>
                     <p id="errorPassword" class="text-red-500 text-xs mt-1 hidden"></p>
                 </div>
 

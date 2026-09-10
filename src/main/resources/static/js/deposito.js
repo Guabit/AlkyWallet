@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnDepositar = document.getElementById('btn-depositar');
     const formDeposito = document.getElementById('form-deposito');
     const mensajeNotificacion = document.getElementById('mensaje-notificacion');
+    const imgQr = document.getElementById('qr-deposito');
     const token = localStorage.getItem('token');
 
     // Elementos del selector y dropdown
@@ -21,6 +22,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnDepositar) btnDepositar.disabled = true;
 
+    // Generar o actualizar el QR dinámico apuntando a Transferencias
+    function actualizarQrDinamico() {
+        if (!imgQr) return;
+        const emailEl = document.getElementById('email-usuario');
+        const email = emailEl ? emailEl.textContent.trim() : '';
+
+        // Si todavía está cargando el email, no generamos todavía
+        if (!email || email.toLowerCase() === 'cargando...') return;
+
+        const params = new URLSearchParams({
+            to: email,
+            currency: monedaSeleccionada
+        });
+
+        const monto = parseFloat(inputMonto ? inputMonto.value : 0);
+        if (!isNaN(monto) && monto > 0) {
+            params.set('amount', monto.toFixed(2));
+        }
+
+        const linkTransferencia = `${window.location.origin}/html/tranferencia.html?${params.toString()}`;
+        imgQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(linkTransferencia)}`;
+    }
+
     // Verificar si el usuario tiene cuenta en USD
     if (token) {
         try {
@@ -38,6 +62,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (e) {
             console.error('Error al cargar cuentas:', e);
         }
+    }
+
+    // Inicializamos el QR cuando el DOM esté listo o cuando cambie el email
+    actualizarQrDinamico();
+    const observadorEmail = new MutationObserver(() => actualizarQrDinamico());
+    const emailEl = document.getElementById('email-usuario');
+    if (emailEl) {
+        observadorEmail.observe(emailEl, { childList: true, characterData: true, subtree: true });
     }
 
     // Alternar visibilidad del menú desplegable
@@ -109,12 +141,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (checkArs) checkArs.classList.remove('hidden');
             if (checkUsd) checkUsd.classList.add('hidden');
         }
+
+        // Actualiza el QR con la nueva moneda seleccionada
+        actualizarQrDinamico();
     }
 
     if (inputMonto) {
         inputMonto.addEventListener('input', () => {
             const monto = parseFloat(inputMonto.value);
             btnDepositar.disabled = !(monto > 0);
+            // Actualiza el QR en vivo con el monto ingresado
+            actualizarQrDinamico();
         });
     }
 
@@ -143,6 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     mostrarMensaje(`¡Depósito de ${simboloNotif} ${monto.toFixed(2)} procesado con éxito!`, 'exito');
                     inputMonto.value = '';
                     btnDepositar.disabled = true;
+                    actualizarQrDinamico();
                 } else if (response.status === 401 || response.status === 403) {
                     localStorage.removeItem('token');
                     window.location.href = 'ingresar.html';
