@@ -44,8 +44,7 @@ public class SecurityConfig {
                         // Endpoints públicos de la API
                         .requestMatchers(
                                 "/api/auth/**",
-                                "/api/usuarios/registrar",
-                                "/api/mercadopago/webhook"
+                                "/api/usuarios/registrar"
                         ).permitAll()
                         // Documentación Swagger / OpenAPI
                         .requestMatchers(
