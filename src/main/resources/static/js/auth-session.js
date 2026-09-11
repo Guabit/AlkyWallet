@@ -8,6 +8,8 @@ if (!token) {
 function cerrarSesion() {
     localStorage.removeItem('token');
     localStorage.removeItem('user_display_name');
+    sessionStorage.removeItem('alky_chat_historial');
+    sessionStorage.removeItem('alky_chat_abierto');
     window.location.href = 'ingresar.html';
 }
 

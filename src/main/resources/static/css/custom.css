@@ -83,3 +83,24 @@ input[type="number"]::-webkit-outer-spin-button:hover {
 .btn-copiar:active {
   transform: scale(0.95);
 }
+
+/* ==========================================
+   4. SCROLLBAR PERSONALIZADA PARA ASISTENTE IA
+   ========================================== */
+#chat-mensajes-lista::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chat-mensajes-lista::-webkit-scrollbar-track {
+  background: rgba(13, 11, 20, 0.5);
+  border-radius: 6px;
+}
+
+#chat-mensajes-lista::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 254, 0.3);
+  border-radius: 6px;
+}
+
+#chat-mensajes-lista::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.7);
+}

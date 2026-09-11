@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="../css/custom.css" />
     <script defer src="../js/sidebar.js"></script>
     <script defer src="../js/auth-session.js"></script>
+    <script defer src="../js/asistente-widget.js"></script>
     <script defer src="../js/servicios.js"></script>
   </head>
   <body
@@ -314,6 +315,7 @@
               <input
                 type="text"
                 id="pedidosya-comercio"
+                aria-label="Comercio a pagar en PedidosYa"
                 placeholder="Comercio (ej: Burger Bros)"
                 class="flex-1 bg-[#0D0B14] text-white border border-gray-800 rounded-xl px-4 py-2.5 outline-none focus:border-turquoiseNeon text-sm"
               />
@@ -324,6 +326,7 @@
                 <input
                   type="number"
                   id="pedidosya-monto"
+                  aria-label="Monto a pagar en PedidosYa"
                   min="1"
                   step="0.01"
                   placeholder="0.00"
@@ -360,6 +363,7 @@
               <input
                 type="text"
                 id="telepase-patente"
+                aria-label="Patente del vehículo para Telepase"
                 placeholder="Patente (opcional)"
                 class="flex-1 bg-[#0D0B14] text-white border border-gray-800 rounded-xl px-4 py-2.5 outline-none focus:border-turquoiseNeon text-sm"
               />
@@ -370,6 +374,7 @@
                 <input
                   type="number"
                   id="telepase-monto"
+                  aria-label="Monto a pagar en Telepase"
                   min="1"
                   step="0.01"
                   placeholder="0.00"
@@ -387,44 +392,6 @@
               id="telepase-mensaje"
               class="text-xs text-center font-medium hidden pt-3"
             ></div>
-          </div>
-
-          <!-- Asistente IA -->
-          <div
-            class="bg-cardDark rounded-2xl p-6 border border-turquoiseNeon/30 shadow-xl"
-          >
-            <div class="flex items-center justify-between mb-1">
-              <h3 class="text-lg font-bold text-white">Asistente IA</h3>
-              <span
-                class="text-[11px] text-turquoiseNeon bg-turquoiseNeon/10 px-2 py-0.5 rounded-full"
-                >Ollama local</span
-              >
-            </div>
-            <p class="text-xs text-gray-400 mb-4">
-              Preguntá por tu saldo, tus gastos del mes, por categoría, o la
-              cotización del dólar.
-            </p>
-
-            <div
-              id="asistente-chat"
-              class="space-y-3 mb-4 max-h-72 overflow-y-auto pr-1"
-            ></div>
-
-            <form id="form-asistente" class="flex gap-3">
-              <input
-                type="text"
-                id="asistente-pregunta"
-                placeholder="¿Cuánto gasté este mes?"
-                class="flex-1 bg-[#0D0B14] text-white border border-gray-800 rounded-xl px-4 py-2.5 outline-none focus:border-turquoiseNeon text-sm"
-              />
-              <button
-                type="submit"
-                id="btn-asistente-enviar"
-                class="bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-2.5 px-6 rounded-xl shadow-lg hover:opacity-90 transition glow-button text-sm"
-              >
-                Preguntar
-              </button>
-            </form>
           </div>
         </div>
       </div>

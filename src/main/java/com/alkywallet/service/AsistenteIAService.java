@@ -3,24 +3,24 @@ package com.alkywallet.service;
 import com.alkywallet.dto.CuentaDTO;
 import com.alkywallet.dto.CotizacionDolarDTO;
 import com.alkywallet.dto.GastoPorCategoriaDTO;
+import com.alkywallet.dto.TransaccionDTO;
 import com.alkywallet.entity.CategoriaTransaccion;
+import com.alkywallet.entity.TipoMoneda;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
- * Asistente de IA para consultas sobre la propia billetera. En vez de
- * dejar que el modelo decida qué datos consultar (poco confiable con
- * modelos chicos corriendo en local), el service resuelve primero la
- * intención con reglas simples y consulta los datos reales del usuario;
- * a Ollama solo se le pide que redacte la respuesta en lenguaje natural
- * a partir de ese dato ya calculado. Así la funcionalidad no depende de
- * que el modelo "alucine" un monto.
+ * Asistente de IA para consultas sobre la propia billetera. Resuelve la intención
+ * consultando datos reales del usuario y le proporciona a Ollama el contexto
+ * verídico para redactar la respuesta en lenguaje natural.
  */
 @Service
 @RequiredArgsConstructor
@@ -35,11 +35,43 @@ public class AsistenteIAService {
     public String responder(String email, String pregunta) {
         String normalizada = normalizar(pregunta);
 
-        if (contieneAlguna(normalizada, "cuanto gaste", "gastos del mes", "gasto del mes", "gasto mensual")) {
+        // 1. Saldo específico en dólares (no auto-crea la cuenta si no existe)
+        if (contieneAlguna(normalizada, "dolar", "dolares", "usd") &&
+                contieneAlguna(normalizada, "saldo", "cuanto tengo", "balance", "plata")) {
+            Optional<CuentaDTO> cuentaUsdOpt = cuentaService.obtenerCuentasPorEmail(email).stream()
+                    .filter(c -> c.getTipoMoneda() == TipoMoneda.USD)
+                    .findFirst();
+
+            if (cuentaUsdOpt.isEmpty()) {
+                return generarConDato(pregunta, "El usuario todavía no tiene una cuenta en dólares (USD) abierta. Puede abrir su caja de ahorro en USD gratis desde el botón en el Dashboard.");
+            }
+            return generarConDato(pregunta, "El saldo en dólares (USD) del usuario es " + formatearUSD(cuentaUsdOpt.get().getSaldo()) + ".");
+        }
+
+        // 2. Saldo general / en pesos
+        if (contieneAlguna(normalizada, "saldo", "cuanto tengo", "balance", "cuanta plata", "mis fondos")) {
+            CuentaDTO cuenta = cuentaService.obtenerBalancePorEmail(email, TipoMoneda.ARS);
+            return generarConDato(pregunta, "El saldo en pesos (ARS) del usuario es " + formatear(cuenta.getSaldo()) + ".");
+        }
+
+        // 3. Gastos globales del mes
+        if (contieneAlguna(normalizada, "cuanto gaste", "gastos del mes", "gasto del mes", "gasto mensual", "total gastado")) {
             BigDecimal total = transaccionService.obtenerTotalGastadoEsteMesPorEmail(email);
             return generarConDato(pregunta, "El usuario gastó " + formatear(total) + " este mes, sumando transferencias y pagos enviados.");
         }
 
+        // 4. Mayor gasto del mes
+        if (contieneAlguna(normalizada, "en que gaste mas", "mayor gasto", "gasto mas alto", "donde se fue mi plata", "donde gaste mas")) {
+            List<GastoPorCategoriaDTO> reporte = transaccionService.obtenerReporteCategoriasPorEmail(email);
+            var max = reporte.stream().max(Comparator.comparing(GastoPorCategoriaDTO::getTotal));
+            if (max.isPresent() && max.get().getTotal().compareTo(BigDecimal.ZERO) > 0) {
+                return generarConDato(pregunta, "El mayor gasto del mes fue en la categoría " + max.get().getCategoria() + " con un total de " + formatear(max.get().getTotal()) + ".");
+            } else {
+                return generarConDato(pregunta, "Aún no registrás gastos por categoría durante este mes.");
+            }
+        }
+
+        // 5. Gastos por categoría específica
         CategoriaTransaccion categoria = detectarCategoria(normalizada);
         if (categoria != null) {
             List<GastoPorCategoriaDTO> reporte = transaccionService.obtenerReporteCategoriasPorEmail(email);
@@ -51,11 +83,39 @@ public class AsistenteIAService {
             return generarConDato(pregunta, "El usuario gastó " + formatear(total) + " en la categoría " + categoria + ".");
         }
 
-        if (contieneAlguna(normalizada, "saldo", "cuanto tengo", "balance", "cuanta plata")) {
-            CuentaDTO cuenta = cuentaService.obtenerBalancePorEmail(email);
-            return generarConDato(pregunta, "El saldo disponible del usuario es " + formatear(cuenta.getSaldo()) + ".");
+        // 6. Últimos movimientos / transferencias recientes
+        if (contieneAlguna(normalizada, "ultimo movimiento", "ultimos movimientos", "movimientos recientes",
+                "ultima transferencia", "ultimas transferencias", "mis movimientos", "que transferi", "ultimas transacciones")) {
+            List<TransaccionDTO> historial = transaccionService.obtenerHistorialPorEmail(email);
+            if (historial == null || historial.isEmpty()) {
+                return generarConDato(pregunta, "El usuario todavía no registra ningún movimiento en su cuenta.");
+            }
+            TransaccionDTO ult = historial.getFirst();
+            String fecha = ult.getFecha() != null ? ult.getFecha().toLocalDate().toString() : "reciente";
+            String concepto = (ult.getConcepto() != null && !ult.getConcepto().isBlank()) ? ult.getConcepto() : "Operación";
+            String dato = String.format("El último movimiento registrado del usuario fue un %s de %s (concepto: '%s') el %s.",
+                    ult.getTipoTransaccion(), formatear(ult.getMonto()), concepto, fecha);
+            return generarConDato(pregunta, dato);
         }
 
+        // 7. Guía y ayuda operativa de la billetera
+        if (contieneAlguna(normalizada, "comprar dolar", "compro dolar", "vender dolar", "comprar usd", "vender usd", "cambiar dolar")) {
+            return "Podés comprar o vender dólares en la sección 'Cotización del Dólar' del Dashboard. Ingresá el monto y confirmá la operación con 'Comprar USD' o 'Vender USD' al tipo de cambio oficial.";
+        }
+
+        if (contieneAlguna(normalizada, "plazo fijo", "como invertir", "como invierto", "rendimiento", "tasa de interes", "tna")) {
+            return "En la pestaña 'Inversiones' podés simular e invertir tu dinero a plazo fijo. La tasa nominal anual (TNA) estimada es del 40% en Pesos (ARS) y 4% en Dólares (USD).";
+        }
+
+        if (contieneAlguna(normalizada, "como deposito", "como ingresar dinero", "cargar dinero", "cargar plata", "como depositar")) {
+            return "Para ingresar dinero, dirigite a 'Depósitos' en el menú lateral. Podés seleccionar si depositar en ARS o USD, ingresar el monto o utilizar el código QR en pantalla.";
+        }
+
+        if (contieneAlguna(normalizada, "como transfiero", "como transferir", "enviar dinero", "enviar plata", "hacer transferencia")) {
+            return "Para transferir, ingresá a 'Transferencias' en el menú lateral, seleccioná la moneda (ARS o USD), escribí el email del destinatario y el monto a enviar.";
+        }
+
+        // 8. Cotización del dólar
         if (contieneAlguna(normalizada, "dolar", "cotizacion")) {
             try {
                 List<CotizacionDolarDTO> cotizaciones = cotizacionService.obtenerCotizaciones();
@@ -69,7 +129,8 @@ public class AsistenteIAService {
             }
         }
 
-        return generarRespuestaGeneral(pregunta);
+        // 9. Consulta libre / general enriquecida con contexto real
+        return generarRespuestaGeneralConContexto(email, pregunta);
     }
 
     private String generarConDato(String preguntaOriginal, String dato) {
@@ -84,23 +145,50 @@ public class AsistenteIAService {
             return ollamaClient.generar(prompt).trim();
         } catch (Exception ex) {
             log.warn("Ollama no disponible, devolviendo el dato sin redactar: {}", ex.getMessage());
-            // Degradación amable: la funcionalidad no se cae aunque Ollama no esté corriendo.
             return dato;
         }
     }
 
-    private String generarRespuestaGeneral(String pregunta) {
+    private String generarRespuestaGeneralConContexto(String email, String pregunta) {
+        StringBuilder contexto = new StringBuilder();
+        try {
+            CuentaDTO saldoArs = cuentaService.obtenerBalancePorEmail(email, TipoMoneda.ARS);
+            contexto.append("- Saldo en pesos: ").append(formatear(saldoArs.getSaldo())).append("\n");
+
+            Optional<CuentaDTO> cuentaUsdOpt = cuentaService.obtenerCuentasPorEmail(email).stream()
+                    .filter(c -> c.getTipoMoneda() == TipoMoneda.USD)
+                    .findFirst();
+
+            if (cuentaUsdOpt.isPresent()) {
+                contexto.append("- Saldo en dólares: ").append(formatearUSD(cuentaUsdOpt.get().getSaldo())).append("\n");
+            } else {
+                contexto.append("- Cuenta en dólares: El usuario aún no ha abierto su cuenta en dólares\n");
+            }
+
+            BigDecimal totalMes = transaccionService.obtenerTotalGastadoEsteMesPorEmail(email);
+            contexto.append("- Gastos de este mes: ").append(formatear(totalMes)).append("\n");
+
+            List<TransaccionDTO> historial = transaccionService.obtenerHistorialPorEmail(email);
+            if (historial != null && !historial.isEmpty()) {
+                TransaccionDTO ult = historial.getFirst();
+                contexto.append("- Último movimiento: ").append(ult.getTipoTransaccion()).append(" de ").append(formatear(ult.getMonto())).append("\n");
+            }
+        } catch (Exception e) {
+            log.debug("No se pudo compilar el contexto completo del usuario: {}", e.getMessage());
+        }
+
         String prompt = """
-                Sos el asistente financiero de AlkyWallet. Por ahora solo podés informar: saldo actual, \
-                gastos del mes, gastos por categoría (comida, transporte, servicios, entretenimiento, \
-                salud, educación) y cotización del dólar. Si la pregunta no entra en esos temas, \
-                respondé amablemente que todavía no podés ayudar con eso y sugerí una de esas opciones. \
+                Sos el asistente financiero inteligente de AlkyWallet. Respondé en español con tono amable, \
+                conciso y profesional. Podés usar la siguiente información real del usuario para responder su duda \
+                o guiarlo sobre la billetera:
+                %s
                 Pregunta del usuario: "%s"
-                Respuesta:""".formatted(pregunta);
+                Respuesta:""".formatted(contexto.toString(), pregunta);
+
         try {
             return ollamaClient.generar(prompt).trim();
         } catch (Exception ex) {
-            return "Por ahora puedo contarte tu saldo, tus gastos del mes, tus gastos por categoría o la cotización del dólar. Probá preguntarme alguna de esas cosas.";
+            return "Puedo ayudarte con tu saldo en pesos o dólares, tus gastos del mes, tus últimos movimientos, la cotización del dólar, o cómo invertir y transferir en la app. ¿Qué te gustaría consultar?";
         }
     }
 
@@ -132,5 +220,9 @@ public class AsistenteIAService {
 
     private String formatear(BigDecimal monto) {
         return "$" + monto.setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    private String formatearUSD(BigDecimal monto) {
+        return "US$" + monto.setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
 }
