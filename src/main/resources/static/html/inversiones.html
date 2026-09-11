@@ -27,79 +27,244 @@
     <script defer src="../js/auth-session.js"></script>
     <script defer src="../js/inversiones.js"></script>
   </head>
-  <body class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative overflow-x-hidden font-sans">
-    <div class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-10 -right-10 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
+  <body
+    class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative overflow-x-hidden font-sans"
+  >
+    <div
+      class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"
+    ></div>
+    <div
+      class="absolute -bottom-10 -right-10 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"
+    ></div>
 
     <!-- SIDEBAR / MENÚ LATERAL -->
-    <aside class="w-full md:w-64 md:sticky md:top-0 md:h-screen bg-cardDark/80 backdrop-blur-md border-b md:border-b-0 md:border-r border-gray-800 p-4 md:p-6 flex flex-col justify-between z-20 shrink-0">
+    <aside
+      class="w-full md:w-64 md:fixed md:inset-y-0 md:left-0 md:h-screen bg-cardDark/80 backdrop-blur-md border-b md:border-b-0 md:border-r border-gray-800 p-4 md:p-6 flex flex-col justify-between z-20 shrink-0"
+    >
       <div>
-        <div class="flex items-center justify-between md:justify-start space-x-3 mb-4 md:mb-8">
+        <div
+          class="flex items-center justify-between md:justify-start space-x-3 mb-4 md:mb-8"
+        >
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-cardDark border border-fuchsiaNeon rounded-xl flex items-center justify-center shadow-lg shrink-0">
-              <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke="#00F2FE" stroke-linecap="round" stroke-linejoin="round" d="M7 20V4m0 0L3 8m4-4l4 4" />
-                <path stroke="#E025CE" stroke-linecap="round" stroke-linejoin="round" d="M17 4v16m0 0l4-4m-4 4l-4-4" />
+            <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-cardDark border border-fuchsiaNeon rounded-xl flex items-center justify-center shadow-lg shrink-0"
+            >
+              <svg
+                class="w-6 h-6 md:w-7 md:h-7"
+                fill="none"
+                stroke-width="2.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="#00F2FE"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M7 20V4m0 0L3 8m4-4l4 4"
+                />
+                <path
+                  stroke="#E025CE"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 4v16m0 0l4-4m-4 4l-4-4"
+                />
               </svg>
             </div>
-            <h1 class="text-lg md:text-xl font-extrabold tracking-wider whitespace-nowrap">
-              <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon">ALKY</span>WALLET
+            <h1
+              class="text-lg md:text-xl font-extrabold tracking-wider whitespace-nowrap"
+            >
+              <span
+                class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon"
+                >ALKY</span
+              >WALLET
             </h1>
           </div>
-          <button id="btn-menu" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          <button
+            id="btn-menu"
+            class="md:hidden text-gray-400 hover:text-white focus:outline-none"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
         </div>
 
-        <nav id="menu-nav" class="hidden md:flex flex-col space-y-2 mt-4 md:mt-0 border-t border-gray-800/80 pt-4 md:pt-0 md:border-0">
-          <a href="tableroDeControl.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm">
-            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        <nav
+          id="menu-nav"
+          class="hidden md:flex flex-col space-y-2 mt-4 md:mt-0 border-t border-gray-800/80 pt-4 md:pt-0 md:border-0"
+        >
+          <a
+            href="tableroDeControl.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+              />
             </svg>
             <span>Dashboard</span>
           </a>
-          <a href="tranferencia.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm">
-            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          <a
+            href="tranferencia.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
             </svg>
             <span>Transferencias</span>
           </a>
-          <a href="deposito.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm">
-            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          <a
+            href="deposito.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
             </svg>
             <span>Depósitos</span>
           </a>
-          <a href="inversiones.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white font-semibold shadow-lg text-sm">
-            <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l6-6 4 4 8-8M21 7v6m0-6h-6" />
+          <a
+            href="inversiones.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white font-semibold shadow-lg text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-90"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 17l6-6 4 4 8-8M21 7v6m0-6h-6"
+              />
             </svg>
             <span>Inversiones</span>
           </a>
-          <a href="servicios.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm">
-            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <rect x="4" y="4" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="13" y="4" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="4" y="13" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="13" y="13" width="7" height="7" rx="1.5" stroke-width="2" />
+          <a
+            href="servicios.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <rect
+                x="4"
+                y="4"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="13"
+                y="4"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="4"
+                y="13"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="13"
+                y="13"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
             </svg>
             <span>Servicios</span>
           </a>
-          <a href="perfil.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm">
-            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <a
+            href="perfil.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
             </svg>
             <span>Perfil</span>
           </a>
         </nav>
       </div>
 
-      <div id="menu-salir" class="hidden md:block pt-4 border-t border-gray-800 mt-6">
-        <button id="btn-salir" class="w-full flex items-center space-x-2 text-gray-400 hover:text-red-400 transition text-sm font-medium">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+      <div
+        id="menu-salir"
+        class="hidden md:block pt-4 border-t border-gray-800 mt-6"
+      >
+        <button
+          id="btn-salir"
+          class="w-full flex items-center space-x-2 text-gray-400 hover:text-red-400 transition text-sm font-medium"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5"
+            />
           </svg>
           <span>Cerrar Sesión</span>
         </button>
@@ -107,60 +272,122 @@
     </aside>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="flex-grow flex flex-col justify-between p-6 md:p-12 z-10 min-h-screen">
+    <main
+      class="flex-grow md:ml-64 flex flex-col justify-between p-6 md:p-12 z-10 min-h-screen"
+    >
       <div>
         <div class="flex justify-between items-center mb-6">
           <div>
             <h2 class="text-2xl font-bold text-white">Inversiones</h2>
-            <p class="text-xs text-gray-400 mt-1">Fondo Común de Inversión simulado, con rendimiento diario</p>
+            <p class="text-xs text-gray-400 mt-1">
+              Fondo Común de Inversión simulado, con rendimiento diario
+            </p>
           </div>
-          <div class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800">
-            <span class="user-email text-sm font-medium text-white">Cargando...</span>
-            <img src="https://i.pravatar.cc/100?img=12" alt="Foto de Perfil" class="w-8 h-8 rounded-full border border-turquoiseNeon object-cover" />
+          <div
+            class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800"
+          >
+            <span class="user-email text-sm font-medium text-white"
+              >Cargando...</span
+            >
+            <img
+              src="https://i.pravatar.cc/100?img=12"
+              alt="Foto de Perfil"
+              class="w-8 h-8 rounded-full border border-turquoiseNeon object-cover"
+            />
           </div>
         </div>
 
         <div class="max-w-4xl mx-auto w-full space-y-6">
           <!-- Aviso de simulación -->
-          <div class="bg-cardDark rounded-2xl p-4 border border-turquoiseNeon/30 flex items-start gap-3">
-            <span class="text-turquoiseNeon text-lg leading-none mt-0.5">ⓘ</span>
+          <div
+            class="bg-cardDark rounded-2xl p-4 border border-turquoiseNeon/30 flex items-start gap-3"
+          >
+            <span class="text-turquoiseNeon text-lg leading-none mt-0.5"
+              >ⓘ</span
+            >
             <p class="text-xs text-gray-400">
-              Estas inversiones son <strong class="text-turquoiseNeon">simuladas</strong> con fines demostrativos.
-              El rendimiento se calcula con una tasa de ejemplo y no representa un producto financiero real.
+              Estas inversiones son
+              <strong class="text-turquoiseNeon">simuladas</strong> con fines
+              demostrativos. El rendimiento se calcula con una tasa de ejemplo y
+              no representa un producto financiero real.
             </p>
           </div>
 
           <!-- Nueva inversión -->
-          <div class="bg-cardDark rounded-2xl p-6 md:p-8 border border-fuchsiaNeon/30 shadow-2xl glow-card-fuchsia">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+          <div
+            class="bg-cardDark rounded-2xl p-6 md:p-8 border border-fuchsiaNeon/30 shadow-2xl glow-card-fuchsia"
+          >
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4"
+            >
               <div class="flex items-center gap-3">
-                 <h3 class="text-lg font-bold text-white">Nueva inversión</h3>
-                 <div class="inline-flex bg-[#0D0B14] p-0.5 rounded-lg border border-gray-800 text-[11px]">
-                   <button id="btn-inversion-ars" type="button" class="px-2 py-0.5 rounded font-bold transition text-white bg-fuchsiaNeon">ARS</button>
-                   <button id="btn-inversion-usd" type="button" class="px-2 py-0.5 rounded font-semibold transition text-gray-400 hover:text-white">USD</button>
-                 </div>
+                <h3 class="text-lg font-bold text-white">Nueva inversión</h3>
+                <div
+                  class="inline-flex bg-[#0D0B14] p-0.5 rounded-lg border border-gray-800 text-[11px]"
+                >
+                  <button
+                    id="btn-inversion-ars"
+                    type="button"
+                    class="px-2 py-0.5 rounded font-bold transition text-white bg-fuchsiaNeon"
+                  >
+                    ARS
+                  </button>
+                  <button
+                    id="btn-inversion-usd"
+                    type="button"
+                    class="px-2 py-0.5 rounded font-semibold transition text-gray-400 hover:text-white"
+                  >
+                    USD
+                  </button>
+                </div>
               </div>
               <span class="text-xs text-gray-400 mt-1 sm:mt-0">
-                Disponible: <strong id="saldo-disponible-inversion" class="text-turquoiseNeon font-mono">$ 0,00</strong>
+                Disponible:
+                <strong
+                  id="saldo-disponible-inversion"
+                  class="text-turquoiseNeon font-mono"
+                  >$ 0,00</strong
+                >
               </span>
             </div>
             <form id="form-invertir" class="flex flex-col sm:flex-row gap-3">
-              <div class="flex items-center bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon flex-1">
+              <div
+                class="flex items-center bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon flex-1"
+              >
                 <span class="text-gray-400 mr-2">$</span>
-                <input type="number" id="monto-invertir" aria-label="Monto a invertir" min="1" step="0.01" placeholder="0.00" class="bg-transparent flex-1 text-sm text-white outline-none" />
+                <input
+                  type="number"
+                  id="monto-invertir"
+                  aria-label="Monto a invertir"
+                  min="1"
+                  step="0.01"
+                  placeholder="0.00"
+                  class="bg-transparent flex-1 text-sm text-white outline-none"
+                />
               </div>
-              <button type="submit" id="btn-invertir" class="bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-2.5 px-6 rounded-xl shadow-lg hover:opacity-90 transition glow-button text-sm whitespace-nowrap">
+              <button
+                type="submit"
+                id="btn-invertir"
+                class="bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-2.5 px-6 rounded-xl shadow-lg hover:opacity-90 transition glow-button text-sm whitespace-nowrap"
+              >
                 Invertir
               </button>
             </form>
-            <div id="mensaje-invertir" class="text-xs text-center font-medium hidden pt-3"></div>
+            <div
+              id="mensaje-invertir"
+              class="text-xs text-center font-medium hidden pt-3"
+            ></div>
           </div>
 
           <!-- Listado de inversiones -->
-          <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl">
+          <div
+            class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl"
+          >
             <h3 class="text-lg font-bold text-white mb-4">Mis inversiones</h3>
             <div id="lista-inversiones" class="space-y-3">
-              <p class="text-xs text-center text-gray-500 py-4">Cargando inversiones...</p>
+              <p class="text-xs text-center text-gray-500 py-4">
+                Cargando inversiones...
+              </p>
             </div>
           </div>
         </div>

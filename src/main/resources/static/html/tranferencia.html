@@ -46,7 +46,7 @@
 
     <!-- SIDEBAR / MENÚ LATERAL -->
     <aside
-      class="w-full md:w-64 md:sticky md:top-0 md:h-screen bg-cardDark/80 backdrop-blur-md border-b md:border-b-0 md:border-r border-gray-800 p-4 md:p-6 flex flex-col justify-between z-20 shrink-0"
+      class="w-full md:w-64 md:fixed md:inset-y-0 md:left-0 md:h-screen bg-cardDark/80 backdrop-blur-md border-b md:border-b-0 md:border-r border-gray-800 p-4 md:p-6 flex flex-col justify-between z-20 shrink-0"
     >
       <div>
         <!-- Header Móvil + Logo -->
@@ -208,10 +208,38 @@
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <rect x="4" y="4" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="13" y="4" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="4" y="13" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="13" y="13" width="7" height="7" rx="1.5" stroke-width="2" />
+              <rect
+                x="4"
+                y="4"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="13"
+                y="4"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="4"
+                y="13"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="13"
+                y="13"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
             </svg>
             <span>Servicios</span>
           </a>
@@ -268,21 +296,25 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main
-      class="flex-grow flex flex-col justify-between p-6 md:p-12 z-10 min-h-screen"
+      class="flex-grow md:ml-64 flex flex-col justify-between p-6 md:p-12 z-10 min-h-screen"
     >
       <div>
         <!-- HEADER SUPERIOR DE USUARIO -->
         <div class="flex justify-between items-center mb-6">
           <div>
             <h2 class="text-2xl font-bold text-white">Transferencias</h2>
-            <p class="text-xs text-gray-400 mt-1">Envío de dinero al instante</p>
+            <p class="text-xs text-gray-400 mt-1">
+              Envío de dinero al instante
+            </p>
           </div>
 
           <!-- Avatar superior -->
           <div
             class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800"
           >
-            <span class="user-email text-sm font-medium text-white">Cargando...</span>
+            <span class="user-email text-sm font-medium text-white"
+              >Cargando...</span
+            >
             <img
               src="https://i.pravatar.cc/100?img=12"
               alt="Foto de Perfil"
@@ -306,8 +338,16 @@
               <!-- Cuenta Origen con Selector de Moneda -->
               <div class="campo">
                 <div class="flex justify-between items-center mb-1">
-                  <label for="cuenta-origen" class="block text-xs text-gray-400 font-medium">Moneda / Cuenta Origen</label>
-                  <span id="label-cuenta-tipo" class="text-[11px] text-turquoiseNeon font-semibold">Pesos Argentinos</span>
+                  <label
+                    for="cuenta-origen"
+                    class="block text-xs text-gray-400 font-medium"
+                    >Moneda / Cuenta Origen</label
+                  >
+                  <span
+                    id="label-cuenta-tipo"
+                    class="text-[11px] text-turquoiseNeon font-semibold"
+                    >Pesos Argentinos</span
+                  >
                 </div>
                 <select
                   id="cuenta-origen"
@@ -315,7 +355,9 @@
                   class="w-full bg-[#0D0B14] text-white border border-gray-800 rounded-xl px-4 py-2.5 outline-none focus:border-turquoiseNeon focus:ring-1 focus:ring-turquoiseNeon transition text-sm font-medium"
                 >
                   <option value="ARS">Cuenta en Pesos (ARS)</option>
-                  <option value="USD" id="option-usd" class="hidden">Caja de Ahorro en Dólares (USD)</option>
+                  <option value="USD" id="option-usd" class="hidden">
+                    Caja de Ahorro en Dólares (USD)
+                  </option>
                 </select>
               </div>
 
@@ -338,10 +380,24 @@
               <!-- Monto -->
               <div class="campo">
                 <div class="flex justify-between items-center mb-1">
-                  <label for="monto" class="block text-xs text-gray-400 font-medium">Monto</label>
+                  <label
+                    for="monto"
+                    class="block text-xs text-gray-400 font-medium"
+                    >Monto</label
+                  >
                   <span class="text-xs text-gray-400 flex items-center gap-1">
-                    Disponible: <strong id="saldo-disponible" class="text-turquoiseNeon font-mono">$ 0,00</strong>
-                    <button type="button" id="btn-toggle-saldo" aria-label="Ocultar saldo" class="text-gray-400 hover:text-turquoiseNeon transition p-0.5"></button>
+                    Disponible:
+                    <strong
+                      id="saldo-disponible"
+                      class="text-turquoiseNeon font-mono"
+                      >$ 0,00</strong
+                    >
+                    <button
+                      type="button"
+                      id="btn-toggle-saldo"
+                      aria-label="Ocultar saldo"
+                      class="text-gray-400 hover:text-turquoiseNeon transition p-0.5"
+                    ></button>
                   </span>
                 </div>
 

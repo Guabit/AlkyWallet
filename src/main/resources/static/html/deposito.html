@@ -30,7 +30,6 @@
     <script defer src="../js/deposito.js"></script>
     <script defer src="../js/sidebar.js"></script>
     <script defer src="../js/auth-session.js"></script>
-
   </head>
   <body
     class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative overflow-x-hidden font-sans"
@@ -45,7 +44,7 @@
 
     <!-- SIDEBAR / MENÚ LATERAL -->
     <aside
-      class="w-full md:w-64 md:sticky md:top-0 md:h-screen bg-cardDark/80 backdrop-blur-md border-b md:border-b-0 md:border-r border-gray-800 p-4 md:p-6 flex flex-col justify-between z-20 shrink-0"
+      class="w-full md:w-64 md:fixed md:inset-y-0 md:left-0 md:h-screen bg-cardDark/80 backdrop-blur-md border-b md:border-b-0 md:border-r border-gray-800 p-4 md:p-6 flex flex-col justify-between z-20 shrink-0"
     >
       <div>
         <!-- Header Móvil + Logo -->
@@ -207,10 +206,38 @@
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <rect x="4" y="4" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="13" y="4" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="4" y="13" width="7" height="7" rx="1.5" stroke-width="2" />
-              <rect x="13" y="13" width="7" height="7" rx="1.5" stroke-width="2" />
+              <rect
+                x="4"
+                y="4"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="13"
+                y="4"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="4"
+                y="13"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
+              <rect
+                x="13"
+                y="13"
+                width="7"
+                height="7"
+                rx="1.5"
+                stroke-width="2"
+              />
             </svg>
             <span>Servicios</span>
           </a>
@@ -267,23 +294,27 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main
-      class="flex-grow flex flex-col justify-between p-6 md:p-12 z-10 min-h-screen"
+      class="flex-grow md:ml-64 flex flex-col justify-between p-6 md:p-12 z-10 min-h-screen"
     >
       <div>
         <!-- HEADER SUPERIOR DE USUARIO -->
         <div class="flex justify-between items-center mb-6">
           <div>
             <h2 class="text-2xl font-bold text-white">Depósitos</h2>
-            <p class="text-xs text-gray-400 mt-1">Ingresá dinero a tu cuenta en pesos o dólares</p>
+            <p class="text-xs text-gray-400 mt-1">
+              Ingresá dinero a tu cuenta en pesos o dólares
+            </p>
           </div>
           <div
-                  class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800"
+            class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800"
           >
-            <span class="user-email text-sm font-medium text-white">Cargando...</span>
+            <span class="user-email text-sm font-medium text-white"
+              >Cargando...</span
+            >
             <img
-                    src="https://i.pravatar.cc/100?img=12"
-                    alt="Foto de Perfil"
-                    class="w-8 h-8 rounded-full border border-turquoiseNeon object-cover"
+              src="https://i.pravatar.cc/100?img=12"
+              alt="Foto de Perfil"
+              class="w-8 h-8 rounded-full border border-turquoiseNeon object-cover"
             />
           </div>
         </div>
@@ -304,7 +335,11 @@
                   class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs border border-emerald-500/40"
                   >$</span
                 >
-                <span id="texto-moneda-actual" class="text-sm font-semibold text-white">ARS (Pesos)</span>
+                <span
+                  id="texto-moneda-actual"
+                  class="text-sm font-semibold text-white"
+                  >ARS (Pesos)</span
+                >
               </div>
               <button
                 type="button"
@@ -312,8 +347,19 @@
                 class="text-xs text-turquoiseNeon hover:underline flex items-center gap-1 font-medium focus:outline-none"
               >
                 <span>Elegir moneda</span>
-                <svg id="flecha-moneda" class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <svg
+                  id="flecha-moneda"
+                  class="w-3.5 h-3.5 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
 
@@ -328,13 +374,22 @@
                   class="opcion-moneda w-full flex items-center justify-between p-2.5 rounded-lg text-left hover:bg-[#0D0B14] transition"
                 >
                   <span class="flex items-center space-x-2.5">
-                    <span class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs border border-emerald-500/40">$</span>
+                    <span
+                      class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs border border-emerald-500/40"
+                      >$</span
+                    >
                     <span class="block">
-                      <span class="block text-xs font-bold text-white">Pesos Argentinos</span>
+                      <span class="block text-xs font-bold text-white"
+                        >Pesos Argentinos</span
+                      >
                       <span class="block text-[10px] text-gray-400">ARS</span>
                     </span>
                   </span>
-                  <span id="check-ars" class="text-turquoiseNeon text-xs font-bold">✓</span>
+                  <span
+                    id="check-ars"
+                    class="text-turquoiseNeon text-xs font-bold"
+                    >✓</span
+                  >
                 </button>
 
                 <button
@@ -343,13 +398,26 @@
                   class="opcion-moneda w-full flex items-center justify-between p-2.5 rounded-lg text-left hover:bg-[#0D0B14] transition"
                 >
                   <span class="flex items-center space-x-2.5">
-                    <span class="w-7 h-7 rounded-full bg-turquoiseNeon/20 text-turquoiseNeon font-bold flex items-center justify-center text-xs border border-turquoiseNeon/40">US$</span>
+                    <span
+                      class="w-7 h-7 rounded-full bg-turquoiseNeon/20 text-turquoiseNeon font-bold flex items-center justify-center text-xs border border-turquoiseNeon/40"
+                      >US$</span
+                    >
                     <span class="block">
-                      <span class="block text-xs font-bold text-white">Dólares Estadounidenses</span>
-                      <span id="subtexto-usd" class="block text-[10px] text-gray-400">USD</span>
+                      <span class="block text-xs font-bold text-white"
+                        >Dólares Estadounidenses</span
+                      >
+                      <span
+                        id="subtexto-usd"
+                        class="block text-[10px] text-gray-400"
+                        >USD</span
+                      >
                     </span>
                   </span>
-                  <span id="check-usd" class="text-turquoiseNeon text-xs font-bold hidden">✓</span>
+                  <span
+                    id="check-usd"
+                    class="text-turquoiseNeon text-xs font-bold hidden"
+                    >✓</span
+                  >
                 </button>
               </div>
             </div>
@@ -370,15 +438,22 @@
             <form id="form-deposito" class="space-y-5">
               <!-- Info Email de la Cuenta -->
               <div class="campo">
-                <span class="block text-xs text-gray-400 mb-1 font-medium">Email vinculado</span>
-                <div class="flex items-center justify-between bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 w-full">
-                  <span id="email-usuario" class="user-email text-xs md:text-sm font-mono text-white truncate pr-2">
+                <span class="block text-xs text-gray-400 mb-1 font-medium"
+                  >Email vinculado</span
+                >
+                <div
+                  class="flex items-center justify-between bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 w-full"
+                >
+                  <span
+                    id="email-usuario"
+                    class="user-email text-xs md:text-sm font-mono text-white truncate pr-2"
+                  >
                     cargando...
                   </span>
                   <button
-                          type="button"
-                          id="btn-copiar-email"
-                          class="text-xs text-turquoiseNeon font-semibold hover:text-white transition shrink-0"
+                    type="button"
+                    id="btn-copiar-email"
+                    class="text-xs text-turquoiseNeon font-semibold hover:text-white transition shrink-0"
                   >
                     Copiar
                   </button>
@@ -387,16 +462,36 @@
 
               <!-- Campo para Ingresar Monto -->
               <div class="campo">
-                <label for="monto" class="block text-xs text-gray-400 mb-1 font-medium">Monto a depositar</label>
-                <div class="flex items-center bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon w-full">
-                  <span id="simbolo-monto-deposito" class="text-gray-400 mr-2 font-mono font-bold">$</span>
-                  <input type="number" id="monto" name="monto" placeholder="0.00" min="1" step="0.01"
-                         class="bg-transparent flex-1 text-sm text-white outline-none">
+                <label
+                  for="monto"
+                  class="block text-xs text-gray-400 mb-1 font-medium"
+                  >Monto a depositar</label
+                >
+                <div
+                  class="flex items-center bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon w-full"
+                >
+                  <span
+                    id="simbolo-monto-deposito"
+                    class="text-gray-400 mr-2 font-mono font-bold"
+                    >$</span
+                  >
+                  <input
+                    type="number"
+                    id="monto"
+                    name="monto"
+                    placeholder="0.00"
+                    min="1"
+                    step="0.01"
+                    class="bg-transparent flex-1 text-sm text-white outline-none"
+                  />
                 </div>
               </div>
 
               <!-- Mensaje de Notificación -->
-              <div id="mensaje-notificacion" class="text-xs text-center font-medium hidden"></div>
+              <div
+                id="mensaje-notificacion"
+                class="text-xs text-center font-medium hidden"
+              ></div>
 
               <!-- Botón Principal -->
               <div class="botones-accion pt-4">

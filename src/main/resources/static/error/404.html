@@ -21,44 +21,92 @@
       };
     </script>
     <style>
-      body { margin: 0; }
-      .glow-card-fuchsia { box-shadow: 0 0 25px rgba(224, 37, 206, 0.2); }
-      .glow-button { box-shadow: 0 0 15px rgba(224, 37, 206, 0.5); }
-      .glow-button:hover { box-shadow: 0 0 20px rgba(0, 242, 254, 0.7); }
-      a, button { transition: all 0.2s ease-in-out; }
+      body {
+        margin: 0;
+      }
+      .glow-card-fuchsia {
+        box-shadow: 0 0 25px rgba(224, 37, 206, 0.2);
+      }
+      .glow-button {
+        box-shadow: 0 0 15px rgba(224, 37, 206, 0.5);
+      }
+      .glow-button:hover {
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.7);
+      }
+      a,
+      button {
+        transition: all 0.2s ease-in-out;
+      }
     </style>
   </head>
-  <body class="bg-bgMain text-textLight min-h-screen flex items-center justify-center relative overflow-hidden font-sans">
-    <div class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-10 -right-10 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
+  <body
+    class="bg-bgMain text-textLight min-h-screen flex items-center justify-center relative overflow-hidden font-sans"
+  >
+    <div
+      class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"
+    ></div>
+    <div
+      class="absolute -bottom-10 -right-10 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"
+    ></div>
 
     <div class="w-full max-w-lg mx-auto p-6 z-10 text-center">
       <div class="flex items-center justify-center space-x-3 mb-10">
-        <div class="w-12 h-12 bg-cardDark border border-fuchsiaNeon rounded-xl flex items-center justify-center shadow-lg">
-          <svg class="w-7 h-7" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke="#00F2FE" stroke-linecap="round" stroke-linejoin="round" d="M7 20V4m0 0L3 8m4-4l4 4" />
-            <path stroke="#E025CE" stroke-linecap="round" stroke-linejoin="round" d="M17 4v16m0 0l4-4m-4 4l-4-4" />
+        <div
+          class="w-12 h-12 bg-cardDark border border-fuchsiaNeon rounded-xl flex items-center justify-center shadow-lg"
+        >
+          <svg
+            class="w-7 h-7"
+            fill="none"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="#00F2FE"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M7 20V4m0 0L3 8m4-4l4 4"
+            />
+            <path
+              stroke="#E025CE"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17 4v16m0 0l4-4m-4 4l-4-4"
+            />
           </svg>
         </div>
         <h1 class="text-xl font-extrabold tracking-wider">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon">ALKY</span>WALLET
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon"
+            >ALKY</span
+          >WALLET
         </h1>
       </div>
 
-      <div class="bg-cardDark rounded-2xl p-10 shadow-2xl border border-fuchsiaNeon/30 glow-card-fuchsia">
-        <p class="text-7xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon">
+      <div
+        class="bg-cardDark rounded-2xl p-10 shadow-2xl border border-fuchsiaNeon/30 glow-card-fuchsia"
+      >
+        <p
+          class="text-7xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon"
+        >
           404
         </p>
         <h2 class="text-lg font-bold text-white mt-4">Esta página no existe</h2>
         <p class="text-sm text-gray-400 mt-2 max-w-sm mx-auto">
-          Revisá la dirección o volvé a un lugar conocido. Tu cuenta y tus movimientos siguen intactos.
+          Revisá la dirección o volvé a un lugar conocido. Tu cuenta y tus
+          movimientos siguen intactos.
         </p>
 
         <div class="flex flex-col sm:flex-row gap-3 justify-center mt-8">
-          <a href="/" class="bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-2.5 px-6 rounded-xl shadow-lg hover:opacity-90 glow-button text-sm">
+          <a
+            href="/"
+            class="bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-2.5 px-6 rounded-xl shadow-lg hover:opacity-90 glow-button text-sm"
+          >
             Ir al inicio
           </a>
-          <a href="/html/ingresar.html" class="border border-turquoiseNeon text-turquoiseNeon font-semibold py-2.5 px-6 rounded-xl hover:bg-turquoiseNeon/10 text-sm">
+          <a
+            href="/html/ingresar.html"
+            class="border border-turquoiseNeon text-turquoiseNeon font-semibold py-2.5 px-6 rounded-xl hover:bg-turquoiseNeon/10 text-sm"
+          >
             Iniciar sesión
           </a>
         </div>

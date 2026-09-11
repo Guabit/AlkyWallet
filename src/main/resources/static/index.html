@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AlkyWallet - Tu billetera virtual</title>
-    <meta name="description" content="AlkyWallet: transferencias, depósitos, inversiones simuladas y cotización del dólar en un solo lugar." />
+    <meta
+      name="description"
+      content="AlkyWallet: transferencias, depósitos, inversiones simuladas y cotización del dólar en un solo lugar."
+    />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -24,7 +27,9 @@
     </script>
     <link rel="stylesheet" href="css/custom.css" />
     <style>
-      body { margin: 0; }
+      body {
+        margin: 0;
+      }
       .landing-hero-card {
         box-shadow: 0 30px 60px -20px rgba(224, 37, 206, 0.35);
       }
@@ -32,75 +37,145 @@
         animation: landing-float 6s ease-in-out infinite;
       }
       @keyframes landing-float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
       }
       @media (prefers-reduced-motion: reduce) {
-        .landing-float { animation: none; }
+        .landing-float {
+          animation: none;
+        }
       }
     </style>
   </head>
   <body class="bg-bgMain text-textLight font-sans overflow-x-hidden">
-    <div class="absolute top-0 left-0 w-full h-[600px] overflow-hidden pointer-events-none -z-10">
-      <div class="absolute -top-24 -left-24 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl"></div>
-      <div class="absolute top-10 -right-24 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl"></div>
+    <div
+      class="absolute top-0 left-0 w-full h-[600px] overflow-hidden pointer-events-none -z-10"
+    >
+      <div
+        class="absolute -top-24 -left-24 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl"
+      ></div>
+      <div
+        class="absolute top-10 -right-24 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl"
+      ></div>
     </div>
 
     <!-- NAV -->
-    <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+    <header
+      class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between"
+    >
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 bg-cardDark border border-fuchsiaNeon rounded-xl flex items-center justify-center shadow-lg">
-          <svg class="w-6 h-6" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke="#00F2FE" stroke-linecap="round" stroke-linejoin="round" d="M7 20V4m0 0L3 8m4-4l4 4" />
-            <path stroke="#E025CE" stroke-linecap="round" stroke-linejoin="round" d="M17 4v16m0 0l4-4m-4 4l-4-4" />
+        <div
+          class="w-10 h-10 bg-cardDark border border-fuchsiaNeon rounded-xl flex items-center justify-center shadow-lg"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="#00F2FE"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M7 20V4m0 0L3 8m4-4l4 4"
+            />
+            <path
+              stroke="#E025CE"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17 4v16m0 0l4-4m-4 4l-4-4"
+            />
           </svg>
         </div>
         <span class="text-lg font-extrabold tracking-wider">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon">ALKY</span>WALLET
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon"
+            >ALKY</span
+          >WALLET
         </span>
       </div>
       <div class="flex items-center gap-3">
-        <a href="html/ingresar.html" class="text-sm font-semibold text-gray-300 hover:text-white transition px-4 py-2">Iniciar sesión</a>
-        <a href="html/registro.html" class="text-sm font-bold text-white bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon px-5 py-2.5 rounded-xl shadow-lg glow-button">Crear cuenta</a>
+        <a
+          href="html/ingresar.html"
+          class="text-sm font-semibold text-gray-300 hover:text-white transition px-4 py-2"
+          >Iniciar sesión</a
+        >
+        <a
+          href="html/registro.html"
+          class="text-sm font-bold text-white bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon px-5 py-2.5 rounded-xl shadow-lg glow-button"
+          >Crear cuenta</a
+        >
       </div>
     </header>
 
     <!-- HERO -->
-    <section class="max-w-6xl mx-auto px-6 pt-12 pb-24 grid md:grid-cols-2 gap-12 items-center">
+    <section
+      class="max-w-6xl mx-auto px-6 pt-12 pb-24 grid md:grid-cols-2 gap-12 items-center"
+    >
       <div>
-        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-white">
+        <h1
+          class="text-4xl md:text-5xl font-extrabold leading-tight text-white"
+        >
           Manejá tu plata sin vueltas.
         </h1>
         <p class="text-gray-400 mt-5 text-base leading-relaxed max-w-md">
-          Transferí, depositá e invertí desde un mismo lugar. Mirá la cotización del dólar,
-          organizá tus gastos por categoría y cobrá con un QR generado al instante.
+          Transferí, depositá e invertí desde un mismo lugar. Mirá la cotización
+          del dólar, organizá tus gastos por categoría y cobrá con un QR
+          generado al instante.
         </p>
         <div class="flex flex-col sm:flex-row gap-3 mt-8">
-          <a href="html/registro.html" class="text-center text-sm font-bold text-white bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon px-6 py-3 rounded-xl shadow-lg glow-button">
+          <a
+            href="html/registro.html"
+            class="text-center text-sm font-bold text-white bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon px-6 py-3 rounded-xl shadow-lg glow-button"
+          >
             Crear cuenta gratis
           </a>
-          <a href="html/ingresar.html" class="text-center text-sm font-semibold text-turquoiseNeon border border-turquoiseNeon px-6 py-3 rounded-xl hover:bg-turquoiseNeon/10 transition">
+          <a
+            href="html/ingresar.html"
+            class="text-center text-sm font-semibold text-turquoiseNeon border border-turquoiseNeon px-6 py-3 rounded-xl hover:bg-turquoiseNeon/10 transition"
+          >
             Ya tengo cuenta
           </a>
         </div>
       </div>
 
       <div class="relative landing-float">
-        <div class="bg-cardDark rounded-2xl p-8 border border-fuchsiaNeon/30 shadow-2xl landing-hero-card max-w-sm mx-auto">
-          <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Balance Total</p>
+        <div
+          class="bg-cardDark rounded-2xl p-8 border border-fuchsiaNeon/30 shadow-2xl landing-hero-card max-w-sm mx-auto"
+        >
+          <p
+            class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1"
+          >
+            Balance Total
+          </p>
           <h2 class="text-4xl font-extrabold text-white">$ 128.450,00</h2>
           <div class="flex gap-3 mt-6">
-            <span class="flex-1 text-center bg-fuchsiaNeon text-white px-4 py-2 rounded-xl font-bold text-sm">Ingresar</span>
-            <span class="flex-1 text-center border border-turquoiseNeon text-turquoiseNeon px-4 py-2 rounded-xl font-bold text-sm">Transferir</span>
+            <span
+              class="flex-1 text-center bg-fuchsiaNeon text-white px-4 py-2 rounded-xl font-bold text-sm"
+              >Ingresar</span
+            >
+            <span
+              class="flex-1 text-center border border-turquoiseNeon text-turquoiseNeon px-4 py-2 rounded-xl font-bold text-sm"
+              >Transferir</span
+            >
           </div>
           <div class="mt-6 pt-6 border-t border-gray-800/80 space-y-3">
             <div class="flex items-center justify-between text-xs">
               <span class="text-gray-400">Dólar oficial</span>
-              <span class="text-turquoiseNeon font-mono font-semibold">$ 1.045,00</span>
+              <span class="text-turquoiseNeon font-mono font-semibold"
+                >$ 1.045,00</span
+              >
             </div>
             <div class="flex items-center justify-between text-xs">
               <span class="text-gray-400">Inversión FCI (simulada)</span>
-              <span class="text-emerald-400 font-mono font-semibold">+$ 312,40 hoy</span>
+              <span class="text-emerald-400 font-mono font-semibold"
+                >+$ 312,40 hoy</span
+              >
             </div>
           </div>
         </div>
@@ -109,65 +184,197 @@
 
     <!-- FEATURES -->
     <section class="max-w-6xl mx-auto px-6 pb-24">
-      <h2 class="text-2xl font-bold text-white text-center mb-10">Todo lo que necesitás, en un solo lugar</h2>
+      <h2 class="text-2xl font-bold text-white text-center mb-10">
+        Todo lo que necesitás, en un solo lugar
+      </h2>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-fuchsiaNeon/40 transition">
-          <div class="w-10 h-10 rounded-xl bg-fuchsiaNeon/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-fuchsiaNeon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        <div
+          class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-fuchsiaNeon/40 transition"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-fuchsiaNeon/10 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-5 h-5 text-fuchsiaNeon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
           </div>
           <h3 class="text-white font-bold mb-1">Transferencias al instante</h3>
-          <p class="text-sm text-gray-400">Enviá dinero a otro usuario por email, con categoría y sin demoras.</p>
+          <p class="text-sm text-gray-400">
+            Enviá dinero a otro usuario por email, con categoría y sin demoras.
+          </p>
         </div>
-        <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-turquoiseNeon/40 transition">
-          <div class="w-10 h-10 rounded-xl bg-turquoiseNeon/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-turquoiseNeon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" stroke-width="2"/><rect x="14" y="4" width="6" height="6" stroke-width="2"/><rect x="4" y="14" width="6" height="6" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M14 14h3m3 0h.01M14 18h3m3 0h.01M14 21h6"/></svg>
+        <div
+          class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-turquoiseNeon/40 transition"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-turquoiseNeon/10 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-5 h-5 text-turquoiseNeon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <rect x="4" y="4" width="6" height="6" stroke-width="2" />
+              <rect x="14" y="4" width="6" height="6" stroke-width="2" />
+              <rect x="4" y="14" width="6" height="6" stroke-width="2" />
+              <path
+                stroke-linecap="round"
+                stroke-width="2"
+                d="M14 14h3m3 0h.01M14 18h3m3 0h.01M14 21h6"
+              />
+            </svg>
           </div>
           <h3 class="text-white font-bold mb-1">Cobrá con QR</h3>
-          <p class="text-sm text-gray-400">Generá un código dinámico con tu email y el monto a cobrar.</p>
+          <p class="text-sm text-gray-400">
+            Generá un código dinámico con tu email y el monto a cobrar.
+          </p>
         </div>
-        <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-fuchsiaNeon/40 transition">
-          <div class="w-10 h-10 rounded-xl bg-fuchsiaNeon/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-fuchsiaNeon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l6-6 4 4 8-8M21 7v6m0-6h-6"/></svg>
+        <div
+          class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-fuchsiaNeon/40 transition"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-fuchsiaNeon/10 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-5 h-5 text-fuchsiaNeon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 17l6-6 4 4 8-8M21 7v6m0-6h-6"
+              />
+            </svg>
           </div>
           <h3 class="text-white font-bold mb-1">Inversiones simuladas</h3>
-          <p class="text-sm text-gray-400">Colocá tu saldo en un FCI de ejemplo y mirá el rendimiento acumularse día a día.</p>
+          <p class="text-sm text-gray-400">
+            Colocá tu saldo en un FCI de ejemplo y mirá el rendimiento
+            acumularse día a día.
+          </p>
         </div>
-        <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-turquoiseNeon/40 transition">
-          <div class="w-10 h-10 rounded-xl bg-turquoiseNeon/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-turquoiseNeon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 10v2"/></svg>
+        <div
+          class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-turquoiseNeon/40 transition"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-turquoiseNeon/10 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-5 h-5 text-turquoiseNeon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 10v2"
+              />
+            </svg>
           </div>
           <h3 class="text-white font-bold mb-1">Dólar en vivo</h3>
-          <p class="text-sm text-gray-400">Consultá la cotización oficial y blue, con un conversor ARS/USD integrado.</p>
+          <p class="text-sm text-gray-400">
+            Consultá la cotización oficial y blue, con un conversor ARS/USD
+            integrado.
+          </p>
         </div>
-        <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-fuchsiaNeon/40 transition">
-          <div class="w-10 h-10 rounded-xl bg-fuchsiaNeon/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-fuchsiaNeon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <div
+          class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-fuchsiaNeon/40 transition"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-fuchsiaNeon/10 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-5 h-5 text-fuchsiaNeon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
           </div>
           <h3 class="text-white font-bold mb-1">Gastos por categoría</h3>
-          <p class="text-sm text-gray-400">Cada transferencia se clasifica para que sepas en qué se te va la plata.</p>
+          <p class="text-sm text-gray-400">
+            Cada transferencia se clasifica para que sepas en qué se te va la
+            plata.
+          </p>
         </div>
-        <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-turquoiseNeon/40 transition">
-          <div class="w-10 h-10 rounded-xl bg-turquoiseNeon/10 flex items-center justify-center mb-4">
-            <svg class="w-5 h-5 text-turquoiseNeon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <div
+          class="bg-cardDark rounded-2xl p-6 border border-gray-800 hover:border-turquoiseNeon/40 transition"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-turquoiseNeon/10 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-5 h-5 text-turquoiseNeon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
           </div>
           <h3 class="text-white font-bold mb-1">Tu saldo, a tu ritmo</h3>
-          <p class="text-sm text-gray-400">Ocultá el balance con un toque cuando estés en un lugar público.</p>
+          <p class="text-sm text-gray-400">
+            Ocultá el balance con un toque cuando estés en un lugar público.
+          </p>
         </div>
       </div>
     </section>
 
     <!-- CTA FINAL -->
     <section class="max-w-4xl mx-auto px-6 pb-24 text-center">
-      <div class="bg-cardDark rounded-2xl p-10 border border-fuchsiaNeon/30 glow-card-fuchsia">
-        <h2 class="text-2xl font-bold text-white mb-3">Empezá en menos de un minuto</h2>
-        <p class="text-sm text-gray-400 mb-6 max-w-md mx-auto">Solo necesitás tu email y tu DNI. Sin papeleo, sin esperas.</p>
-        <a href="html/registro.html" class="inline-block text-sm font-bold text-white bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon px-8 py-3 rounded-xl shadow-lg glow-button">
+      <div
+        class="bg-cardDark rounded-2xl p-10 border border-fuchsiaNeon/30 glow-card-fuchsia"
+      >
+        <h2 class="text-2xl font-bold text-white mb-3">
+          Empezá en menos de un minuto
+        </h2>
+        <p class="text-sm text-gray-400 mb-6 max-w-md mx-auto">
+          Solo necesitás tu email y tu DNI. Sin papeleo, sin esperas.
+        </p>
+        <a
+          href="html/registro.html"
+          class="inline-block text-sm font-bold text-white bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon px-8 py-3 rounded-xl shadow-lg glow-button"
+        >
           Crear mi cuenta
         </a>
       </div>
     </section>
 
-    <footer class="max-w-6xl mx-auto px-6 pb-10 text-center text-xs text-gray-600">
+    <footer
+      class="max-w-6xl mx-auto px-6 pb-10 text-center text-xs text-gray-600"
+    >
       &copy; 2026 ALKYWALLET. Todos los derechos reservados
     </footer>
   </body>
