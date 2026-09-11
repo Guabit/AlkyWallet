@@ -2,19 +2,36 @@
  * asistente-widget.js - Widget flotante global de Asistente IA para AlkyWallet
  * Inyecta un botón flotante y un panel de chat persistente entre navegación de páginas.
  */
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    if (!token) return; // No mostrar si no hay sesión activa
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  if (!token) return; // No mostrar si no hay sesión activa
 
-    const STORAGE_HISTORIAL = 'alky_chat_historial';
-    const STORAGE_ABIERTO = 'alky_chat_abierto';
+  // Obtener email del token para aislar el chat por usuario
+  function obtenerEmailToken(jwt) {
+    try {
+      const payloadBase64 = jwt.split(".")[1];
+      const payloadJson = JSON.parse(atob(payloadBase64));
+      return payloadJson["sub"] || "default";
+    } catch (e) {
+      return "default";
+    }
+  }
 
-    // Inyectar HTML del widget flotante
-    const widgetContainer = document.createElement('div');
-    widgetContainer.id = 'alky-asistente-container';
-    widgetContainer.className = 'fixed bottom-6 right-6 z-50 flex flex-col items-end';
+  const emailUsuario = obtenerEmailToken(token);
+  const STORAGE_HISTORIAL = `alky_chat_historial_${emailUsuario}`;
+  const STORAGE_ABIERTO = `alky_chat_abierto_${emailUsuario}`;
 
-    widgetContainer.innerHTML = `
+  // Limpiar claves obsoletas sin scope si existieran
+  sessionStorage.removeItem("alky_chat_historial");
+  sessionStorage.removeItem("alky_chat_abierto");
+
+  // Inyectar HTML del widget flotante
+  const widgetContainer = document.createElement("div");
+  widgetContainer.id = "alky-asistente-container";
+  widgetContainer.className =
+    "fixed bottom-6 right-6 z-50 flex flex-col items-end";
+
+  widgetContainer.innerHTML = `
       <!-- VENTANA DE CHAT FLOTANTE (Oculta por defecto) -->
       <div
         id="alky-chat-panel"
@@ -109,187 +126,198 @@ document.addEventListener('DOMContentLoaded', () => {
       </button>
     `;
 
-    document.body.appendChild(widgetContainer);
+  document.body.appendChild(widgetContainer);
 
-    // Referencias a elementos
-    const panel = document.getElementById('alky-chat-panel');
-    const btnToggle = document.getElementById('btn-toggle-asistente');
-    const btnCerrar = document.getElementById('btn-cerrar-asistente');
-    const btnLimpiar = document.getElementById('btn-limpiar-chat');
-    const form = document.getElementById('form-chat-flotante');
-    const input = document.getElementById('input-pregunta-flotante');
-    const btnEnviar = document.getElementById('btn-enviar-flotante');
-    const lista = document.getElementById('chat-mensajes-lista');
+  // Referencias a elementos
+  const panel = document.getElementById("alky-chat-panel");
+  const btnToggle = document.getElementById("btn-toggle-asistente");
+  const btnCerrar = document.getElementById("btn-cerrar-asistente");
+  const btnLimpiar = document.getElementById("btn-limpiar-chat");
+  const form = document.getElementById("form-chat-flotante");
+  const input = document.getElementById("input-pregunta-flotante");
+  const btnEnviar = document.getElementById("btn-enviar-flotante");
+  const lista = document.getElementById("chat-mensajes-lista");
 
-    let abierto = false;
-    let historial = [];
+  let abierto = false;
+  let historial = [];
 
-    const MENSAJE_BIENVENIDA = '¡Hola! Soy tu copiloto financiero. Podés preguntarme tu <strong>saldo actual</strong>, <strong>gastos del mes</strong>, la <strong>cotización del dólar</strong> o dudas sobre tus movimientos.';
+  const MENSAJE_BIENVENIDA =
+    "¡Hola! Soy tu copiloto financiero. Podés preguntarme tu <strong>saldo actual</strong>, <strong>gastos del mes</strong>, la <strong>cotización del dólar</strong> o dudas sobre tus movimientos.";
 
-    // Cargar historial desde sessionStorage
-    function cargarHistorial() {
-        try {
-            const guardado = sessionStorage.getItem(STORAGE_HISTORIAL);
-            historial = guardado ? JSON.parse(guardado) : [];
-        } catch (e) {
-            historial = [];
-        }
-
-        lista.innerHTML = '';
-
-        // Si no hay historial previo, mostrar bienvenida
-        if (historial.length === 0) {
-            agregarBurbujaDOM(MENSAJE_BIENVENIDA, false, true);
-        } else {
-            historial.forEach((item) => {
-                agregarBurbujaDOM(item.texto, item.esUsuario);
-            });
-        }
-        lista.scrollTop = lista.scrollHeight;
+  // Cargar historial desde sessionStorage
+  function cargarHistorial() {
+    try {
+      const guardado = sessionStorage.getItem(STORAGE_HISTORIAL);
+      historial = guardado ? JSON.parse(guardado) : [];
+    } catch (e) {
+      historial = [];
     }
 
-    function guardarEnStorage() {
-        try {
-            sessionStorage.setItem(STORAGE_HISTORIAL, JSON.stringify(historial));
-        } catch (e) {
-            console.warn('No se pudo guardar el historial del asistente en sessionStorage', e);
-        }
-    }
+    lista.innerHTML = "";
 
-    function abrirChat(foco = true) {
-        abierto = true;
-        sessionStorage.setItem(STORAGE_ABIERTO, 'true');
-        panel.classList.remove('hidden');
-        panel.classList.add('flex');
-        requestAnimationFrame(() => {
-            panel.classList.remove('scale-95', 'opacity-0');
-            panel.classList.add('scale-100', 'opacity-100');
-            if (foco) input.focus();
-            lista.scrollTop = lista.scrollHeight;
-        });
+    // Si no hay historial previo, mostrar bienvenida
+    if (historial.length === 0) {
+      agregarBurbujaDOM(MENSAJE_BIENVENIDA, false, true);
+    } else {
+      historial.forEach((item) => {
+        agregarBurbujaDOM(item.texto, item.esUsuario);
+      });
     }
+    lista.scrollTop = lista.scrollHeight;
+  }
 
-    function cerrarChat() {
-        abierto = false;
-        sessionStorage.setItem(STORAGE_ABIERTO, 'false');
-        panel.classList.remove('scale-100', 'opacity-100');
-        panel.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            if (!abierto) {
-                panel.classList.remove('flex');
-                panel.classList.add('hidden');
-            }
-        }, 200);
+  function guardarEnStorage() {
+    try {
+      sessionStorage.setItem(STORAGE_HISTORIAL, JSON.stringify(historial));
+    } catch (e) {
+      console.warn(
+        "No se pudo guardar el historial del asistente en sessionStorage",
+        e,
+      );
     }
+  }
 
-    btnToggle.addEventListener('click', () => {
-        if (abierto) cerrarChat();
-        else abrirChat(true);
+  function abrirChat(foco = true) {
+    abierto = true;
+    sessionStorage.setItem(STORAGE_ABIERTO, "true");
+    panel.classList.remove("hidden");
+    panel.classList.add("flex");
+    requestAnimationFrame(() => {
+      panel.classList.remove("scale-95", "opacity-0");
+      panel.classList.add("scale-100", "opacity-100");
+      if (foco) input.focus();
+      lista.scrollTop = lista.scrollHeight;
     });
+  }
 
-    btnCerrar.addEventListener('click', cerrarChat);
+  function cerrarChat() {
+    abierto = false;
+    sessionStorage.setItem(STORAGE_ABIERTO, "false");
+    panel.classList.remove("scale-100", "opacity-100");
+    panel.classList.add("scale-95", "opacity-0");
+    setTimeout(() => {
+      if (!abierto) {
+        panel.classList.remove("flex");
+        panel.classList.add("hidden");
+      }
+    }, 200);
+  }
 
-    btnLimpiar.addEventListener('click', () => {
-        historial = [];
-        sessionStorage.removeItem(STORAGE_HISTORIAL);
-        lista.innerHTML = '';
-        agregarBurbujaDOM(MENSAJE_BIENVENIDA, false, true);
-    });
+  btnToggle.addEventListener("click", () => {
+    if (abierto) cerrarChat();
+    else abrirChat(true);
+  });
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && abierto) cerrarChat();
-    });
+  btnCerrar.addEventListener("click", cerrarChat);
 
-    function agregarBurbujaDOM(texto, esUsuario, esHtml = false) {
-        const burbuja = document.createElement('div');
-        burbuja.className = esUsuario
-            ? 'ml-auto max-w-[80%] bg-fuchsiaNeon/20 border border-fuchsiaNeon/30 text-white rounded-2xl rounded-tr-xs px-3.5 py-2 leading-relaxed shadow-sm'
-            : 'mr-auto max-w-[85%] bg-[#0D0B14] border border-gray-800 text-gray-200 rounded-2xl rounded-tl-xs px-3.5 py-2.5 leading-relaxed shadow-sm';
+  btnLimpiar.addEventListener("click", () => {
+    historial = [];
+    sessionStorage.removeItem(STORAGE_HISTORIAL);
+    lista.innerHTML = "";
+    agregarBurbujaDOM(MENSAJE_BIENVENIDA, false, true);
+  });
 
-        if (esHtml) {
-            burbuja.innerHTML = texto;
-        } else {
-            burbuja.innerHTML = texto
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n/g, '<br>');
-        }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && abierto) cerrarChat();
+  });
 
-        lista.appendChild(burbuja);
-        lista.scrollTop = lista.scrollHeight;
+  function agregarBurbujaDOM(texto, esUsuario, esHtml = false) {
+    const burbuja = document.createElement("div");
+    burbuja.className = esUsuario
+      ? "ml-auto max-w-[80%] bg-fuchsiaNeon/20 border border-fuchsiaNeon/30 text-white rounded-2xl rounded-tr-xs px-3.5 py-2 leading-relaxed shadow-sm"
+      : "mr-auto max-w-[85%] bg-[#0D0B14] border border-gray-800 text-gray-200 rounded-2xl rounded-tl-xs px-3.5 py-2.5 leading-relaxed shadow-sm";
+
+    if (esHtml) {
+      burbuja.innerHTML = texto;
+    } else {
+      burbuja.innerHTML = texto
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br>");
     }
 
-    function agregarMensaje(texto, esUsuario) {
-        historial.push({ texto, esUsuario });
-        guardarEnStorage();
-        agregarBurbujaDOM(texto, esUsuario);
-    }
+    lista.appendChild(burbuja);
+    lista.scrollTop = lista.scrollHeight;
+  }
 
-    function mostrarCargando() {
-        const typing = document.createElement('div');
-        typing.id = 'asistente-typing-indicator';
-        typing.className = 'mr-auto bg-[#0D0B14] border border-gray-800 text-gray-400 rounded-2xl rounded-tl-xs px-3.5 py-2 flex items-center space-x-1 text-[11px]';
-        typing.innerHTML = `
+  function agregarMensaje(texto, esUsuario) {
+    historial.push({ texto, esUsuario });
+    guardarEnStorage();
+    agregarBurbujaDOM(texto, esUsuario);
+  }
+
+  function mostrarCargando() {
+    const typing = document.createElement("div");
+    typing.id = "asistente-typing-indicator";
+    typing.className =
+      "mr-auto bg-[#0D0B14] border border-gray-800 text-gray-400 rounded-2xl rounded-tl-xs px-3.5 py-2 flex items-center space-x-1 text-[11px]";
+    typing.innerHTML = `
           <span>Pensando</span>
           <span class="animate-bounce">.</span>
           <span class="animate-bounce" style="animation-delay: 0.2s">.</span>
           <span class="animate-bounce" style="animation-delay: 0.4s">.</span>
         `;
-        lista.appendChild(typing);
-        lista.scrollTop = lista.scrollHeight;
+    lista.appendChild(typing);
+    lista.scrollTop = lista.scrollHeight;
+  }
+
+  function ocultarCargando() {
+    const typing = document.getElementById("asistente-typing-indicator");
+    if (typing) typing.remove();
+  }
+
+  // Inicializar estado guardado
+  cargarHistorial();
+
+  // Si estaba abierto antes de cambiar de página, reabrir automáticamente
+  if (sessionStorage.getItem(STORAGE_ABIERTO) === "true") {
+    abrirChat(false);
+  }
+
+  // Envío de consulta
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pregunta = input.value.trim();
+    if (!pregunta) return;
+
+    agregarMensaje(pregunta, true);
+    input.value = "";
+    btnEnviar.disabled = true;
+    mostrarCargando();
+
+    try {
+      const response = await fetch("/api/asistente/preguntar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ pregunta }),
+      });
+
+      ocultarCargando();
+
+      const data = await response.json().catch(() => null);
+      if (response.ok && data?.respuesta) {
+        agregarMensaje(data.respuesta, false);
+      } else {
+        agregarMensaje(
+          data?.mensaje || "No pude procesar la respuesta en este momento.",
+          false,
+        );
+      }
+    } catch (error) {
+      ocultarCargando();
+      agregarMensaje(
+        "No pude conectar con el asistente. Asegurate de que el backend esté activo.",
+        false,
+      );
+    } finally {
+      btnEnviar.disabled = false;
+      input.focus();
+      lista.scrollTop = lista.scrollHeight;
     }
-
-    function ocultarCargando() {
-        const typing = document.getElementById('asistente-typing-indicator');
-        if (typing) typing.remove();
-    }
-
-    // Inicializar estado guardado
-    cargarHistorial();
-
-    // Si estaba abierto antes de cambiar de página, reabrir automáticamente
-    if (sessionStorage.getItem(STORAGE_ABIERTO) === 'true') {
-        abrirChat(false);
-    }
-
-    // Envío de consulta
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const pregunta = input.value.trim();
-        if (!pregunta) return;
-
-        agregarMensaje(pregunta, true);
-        input.value = '';
-        btnEnviar.disabled = true;
-        mostrarCargando();
-
-        try {
-            const response = await fetch('/api/asistente/preguntar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ pregunta })
-            });
-
-            ocultarCargando();
-
-            const data = await response.json().catch(() => null);
-            if (response.ok && data?.respuesta) {
-                agregarMensaje(data.respuesta, false);
-            } else {
-                agregarMensaje(data?.mensaje || 'No pude procesar la respuesta en este momento.', false);
-            }
-        } catch (error) {
-            ocultarCargando();
-            agregarMensaje('No pude conectar con el asistente. Asegurate de que el backend esté activo.', false);
-        } finally {
-            btnEnviar.disabled = false;
-            input.focus();
-            lista.scrollTop = lista.scrollHeight;
-        }
-    });
+  });
 });
