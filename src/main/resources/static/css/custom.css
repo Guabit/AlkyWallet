@@ -6,6 +6,7 @@
 }
 
 :root {
+  color-scheme: dark;
   --bg-main: #0D0B14;
   --card-dark: #161221;
   --fuchsia-neon: #E025CE;
@@ -49,6 +50,21 @@ a, button, input {
 
 .campo input:focus {
   box-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+}
+
+/* Controles de incremento y decremento con tema oscuro neón */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.5;
+  cursor: pointer;
+  filter: brightness(1.2);
+  transition: all 0.2s ease;
+}
+
+input[type="number"]::-webkit-inner-spin-button:hover,
+input[type="number"]::-webkit-outer-spin-button:hover {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px #00F2FE) brightness(1.6);
 }
 
 .qr-container {
